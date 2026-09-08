@@ -1,0 +1,26 @@
+{
+  "generator": "built-in image_gen.imagegen",
+  "generationDate": "2026-09-08",
+  "mode": "generate",
+  "requests": 3,
+  "variants": 0,
+  "retries": 0,
+  "inspectedWith": "view_image",
+  "assets": [
+    {
+      "name": "persian-courtyard",
+      "prompt": "Use case: photorealistic-natural\nAsset type: production website immersive background, wide 16:9 landscape photograph.\nPrimary request: a cinematic photoreal Persian courtyard inspired by Kashan secular historic houses. Symmetrical warm ivory plaster arcades surround a turquoise reflecting pool in the foreground and center. Orange trees and cypress, richly carved wooden Orosi windows with muted jewel colored glass. Late afternoon warm light, serene, richly textured yet elegant.\nComposition/framing: eye-level camera, center courtyard and axial symmetry, the architectural space fills the whole image, suitable for interactive hotspots over architectural features. Wide 16:9 view.\nMaterials/textures: aged warm ivory plaster, weathered stone, turquoise pool tiles, carved dark wood, glass, lush orange trees.\nConstraints: no people, no text, no watermark, no politics, no religious symbols. Create exactly one image.",
+      "assetPath": "/images/courtyard.webp"
+    },
+    {
+      "name": "orosi-doors",
+      "prompt": "Use case: photorealistic-natural\nAsset type: production website closed door entrance; the image will be split into two hinged halves to reveal a garden, wide 16:9.\nPrimary request: photoreal front-on close architectural view of closed traditional double Persian Orosi wood doors filling nearly the whole frame. Exactly two symmetrical door leaves meet at the exact vertical center of the image. Rich walnut carved wood lower panels and turquoise, amber, and blue stained geometric glass upper panels. Soft sun and only minimal stone framing at the outer edges.\nComposition/framing: orthogonal front-on camera, perfectly centered seam at 50 percent width, tall doors cropped to fill a wide 16:9 frame. Clear matching left and right halves with no central pillar or third door. Doors closed, opaque sufficient to hide the space beyond.\nMaterials/textures: finely carved walnut wood, jewel toned colored geometric glass, small amount of aged pale stone at edges.\nConstraints: no text, no people, no watermark, no political or religious motifs. Create exactly one image.",
+      "assetPath": "/images/door.webp"
+    },
+    {
+      "name": "persian-library",
+      "prompt": "Use case: photorealistic-natural\nAsset type: production website interior scene background, wide 16:9 photograph.\nPrimary request: photoreal cinematic warm Persian-modern private library interior, with carved wood bookshelves, a big Orosi window, reading table, Persian rug, cream plaster arch, and plants. Gold afternoon sunlight enters the jewel colored Orosi glass. An unoccupied, personal, intimate room with a refined editorial photograph aesthetic.\nComposition/framing: welcoming eye-level wide 16:9 interior architectural view that shows reading table, bookshelves, window, rug, and arch harmoniously, rich natural texture, warm calm atmosphere.\nConstraints: no people, no readable text, no watermark, no political or religious symbols. Create exactly one image.",
+      "assetPath": "/images/library.webp"
+    }
+  ]
+}

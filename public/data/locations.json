@@ -1,0 +1,4 @@
+[
+  { "id": "tokyo", "name": "Tokyo, Japan", "latitude": 35.6762, "longitude": 139.6503, "type": "dream_destination", "description": "A meeting of craftsmanship, contemporary culture, and technology. An example destination from the design brief.", "image": "", "googleEarthLink": "https://earth.google.com/web/search/Tokyo,+Japan", "sample": true },
+  { "id": "kashan", "name": "Kashan, Iran", "latitude": 33.985, "longitude": 51.41, "type": "meaningful_location", "description": "Courtyards, carved wood, and light through colored glass: architectural inspiration for this digital garden.", "image": "", "googleEarthLink": "https://earth.google.com/web/search/Kashan,+Iran", "sample": true }
+]

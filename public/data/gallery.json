@@ -1,0 +1,5 @@
+[
+  { "id": "courtyard", "title": "A quiet afternoon", "caption": "Light, water, and a little room to breathe.", "src": "/images/courtyard.webp", "alt": "Persian courtyard with a turquoise pool, warm plaster arches and trees", "credit": "Architectural concept · AI-generated" },
+  { "id": "orosi", "title": "Through colored glass", "caption": "A study in wood, geometry, and sunlight.", "src": "/images/door.webp", "alt": "Carved walnut Orosi doors with colorful geometric glass", "credit": "Architectural concept · AI-generated" },
+  { "id": "library", "title": "Somewhere to linger", "caption": "An imagined reading room, held in afternoon light.", "src": "/images/library.webp", "alt": "Warm Persian reading room with shelves and an Orosi window", "credit": "Architectural concept · AI-generated" }
+]
