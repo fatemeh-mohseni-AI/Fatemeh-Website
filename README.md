@@ -29,6 +29,34 @@ npm test
 
 `npm run build` uses the preserved Vinext/Cloudflare build. `npm test` builds and then checks server-rendered HTML and content contracts. No browser automation or device FPS profiling was performed in the initial build.
 
+## Run with Docker
+
+Development is optimized so normal source edits do not need a rebuild. The image installs `node_modules` once from `package-lock.json`; Compose mounts only source/config paths over `/app`, leaving dependency layers inside the image.
+
+```bash
+docker compose up --build app
+```
+
+After the first successful build, use this for normal development:
+
+```bash
+docker compose up app
+```
+
+Rebuild only when `package.json`, `package-lock.json`, `Dockerfile`, or base image settings change:
+
+```bash
+docker compose build app
+```
+
+For a production-like local run:
+
+```bash
+docker compose --profile prod up --build app-prod
+```
+
+The Dockerfile uses BuildKit cache mounts for npm downloads. Keeping the same builder/cache means repeat builds reuse npm tarballs and the dependency layer instead of downloading packages again.
+
 ## Architecture
 
 React 19 + TypeScript; Next.js App Router-compatible source on Vinext; Three.js loaded only for Earth or walking mode. Styling uses shared Tailwind tokens and custom CSS. Radix-backed dialog, switch, and slider primitives retain accessibility behavior. There is no external AI API, tracking, CMS, database, or server-side guestbook.

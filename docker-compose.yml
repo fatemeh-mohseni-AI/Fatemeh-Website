@@ -1,0 +1,66 @@
+services:
+  app:
+    build:
+      context: .
+      target: dev
+      args:
+        NODE_VERSION: 22.13.0
+    image: fatemeh-digital-garden:dev
+    ports:
+      - "5173:5173"
+    environment:
+      CODEX_SANDBOX: ${CODEX_SANDBOX:-}
+      WRANGLER_LOG_PATH: /app/.wrangler/wrangler.log
+      WRANGLER_WRITE_LOGS: "false"
+      MINIFLARE_REGISTRY_PATH: /app/.wrangler/registry
+    volumes:
+      - ./app:/app/app
+      - ./build:/app/build
+      - ./components:/app/components
+      - ./db:/app/db
+      - ./hooks:/app/hooks
+      - ./lib:/app/lib
+      - ./public:/app/public
+      - ./scripts:/app/scripts
+      - ./tests:/app/tests
+      - ./vendor:/app/vendor
+      - ./worker:/app/worker
+      - ./.openai:/app/.openai
+      - ./cloudflare-env.d.ts:/app/cloudflare-env.d.ts
+      - ./components.json:/app/components.json
+      - ./drizzle.config.ts:/app/drizzle.config.ts
+      - ./eslint.config.mjs:/app/eslint.config.mjs
+      - ./next.config.ts:/app/next.config.ts
+      - ./postcss.config.mjs:/app/postcss.config.mjs
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./vite.config.ts:/app/vite.config.ts
+      - fatemeh_sites_runtime:/app/.sites-runtime
+      - fatemeh_wrangler:/app/.wrangler
+    command: npm run dev -- --host 0.0.0.0
+
+  app-prod:
+    profiles:
+      - prod
+    build:
+      context: .
+      target: runner
+      args:
+        NODE_VERSION: 22.13.0
+    image: fatemeh-digital-garden:prod
+    ports:
+      - "3000:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3000"
+      WRANGLER_LOG_PATH: /app/.wrangler/wrangler.log
+      WRANGLER_WRITE_LOGS: "false"
+      MINIFLARE_REGISTRY_PATH: /app/.wrangler/registry
+    volumes:
+      - fatemeh_prod_runtime:/app/.sites-runtime
+      - fatemeh_prod_wrangler:/app/.wrangler
+
+volumes:
+  fatemeh_sites_runtime:
+  fatemeh_wrangler:
+  fatemeh_prod_runtime:
+  fatemeh_prod_wrangler:

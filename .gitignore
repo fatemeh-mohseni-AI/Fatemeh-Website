@@ -1,0 +1,10 @@
+node_modules/
+.sites-runtime/
+.wrangler/
+.npm-cache/
+dist/
+.next/
+coverage/
+*.log
+*.tsbuildinfo
+.DS_Store

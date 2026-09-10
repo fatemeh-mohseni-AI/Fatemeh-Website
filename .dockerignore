@@ -1,0 +1,14 @@
+.git
+.openai/.cache
+.sites-runtime
+.wrangler
+node_modules
+dist
+.next
+.npm-cache
+coverage
+*.log
+npm-debug.log*
+.DS_Store
+Dockerfile
+docker-compose*.yml
