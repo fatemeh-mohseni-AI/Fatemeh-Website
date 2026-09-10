@@ -127,7 +127,7 @@ export default function Garden() {
   const entry = useSceneTransition({ commit: commitRoom, preload: loadRoom, notify });
   const warmCinema = () => {
     void loadRoom().catch(() => {});
-    void prepareSceneImage(cinemaTransition.image);
+    cinemaTransition.images.forEach((image) => { void prepareSceneImage(image); });
   };
   const goTo = (id: RoomId) => {
     if (entry.isLocked()) return;
@@ -143,7 +143,10 @@ export default function Garden() {
         y: clamp((bounds.top + bounds.height / 2) / window.innerHeight, 0.05, 0.95),
       } : config.hotspot;
       entry.start(config, reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches, origin);
-    } else commitRoom(id);
+    } else {
+      if (config) entry.selectImage(config);
+      commitRoom(id);
+    }
   };
   const cancelEntry = () => {
     entry.cancel();
@@ -176,11 +179,15 @@ export default function Garden() {
     };
     media.addEventListener("change", update);
     const hash = window.location.hash.slice(1);
-    if (rooms.some((r) => r.id === hash)) commitRoom(hash as RoomId);
+    if (rooms.some((r) => r.id === hash)) {
+      if (hash === "cinema") entry.selectImage(cinemaTransition);
+      commitRoom(hash as RoomId);
+    }
     const onHash = () => {
       const value = window.location.hash.slice(1);
       if (rooms.some((r) => r.id === value)) {
         entry.cancel();
+        if (value === "cinema") entry.selectImage(cinemaTransition);
         commitRoom(value as RoomId);
       }
     };
@@ -190,7 +197,7 @@ export default function Garden() {
       window.removeEventListener("hashchange", onHash);
       if (toastTimer.current) clearTimeout(toastTimer.current);
     };
-  }, [commitRoom, entry.cancel]);
+  }, [commitRoom, entry.cancel, entry.selectImage]);
   useEffect(() => {
     if (entered) discover("garden");
   }, [entered, discover]);
@@ -393,7 +400,8 @@ export default function Garden() {
         {entered ? current.name : "The entrance gate"}
       </span>
       <div className="world-underlay" aria-hidden="true" />
-      {room === "cinema" && <SceneEnvironment image={cinemaTransition.image} className="cinema-environment" />}
+      {room === "cinema" &&
+        <SceneEnvironment image={entry.sceneImage ?? cinemaTransition.images[0]} className="cinema-environment" />}
       <header className="world-header">
         <button
           className="brand"
@@ -1012,6 +1020,7 @@ export default function Garden() {
       </div>
       {entry.request && <SceneTransition
         config={entry.request.config}
+        image={entry.request.image}
         phase={entry.phase}
         imageReady={entry.imageReady}
         reduced={entry.request.reduced}

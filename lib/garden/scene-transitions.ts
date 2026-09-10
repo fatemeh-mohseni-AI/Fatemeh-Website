@@ -5,7 +5,7 @@ export type SceneTransitionConfig = {
   title: string;
   environmentName: string;
   persianLabel: string;
-  image: string;
+  images: readonly string[];
   hotspot: { x: number; y: number };
   timing: { focus: number; approach: number; environment: number; settle: number; reveal: number };
 };
@@ -16,9 +16,15 @@ export const cinemaTransition: SceneTransitionConfig = {
   title: "Cinema & Culture",
   environmentName: "Bagh-e Ferdows · Tehran",
   persianLabel: "باغ فردوس",
-  image: "/images/cinema/bagh-ferdows.webp",
+  images: [
+    "/images/cinema/1.webp",
+    "/images/cinema/2.webp",
+    "/images/cinema/3.webp",
+    "/images/cinema/4.webp",
+    "/images/cinema/5.webp",
+  ],
   hotspot: { x: 0.16, y: 0.68 },
-  timing: { focus: 650, approach: 650, environment: 700, settle: 180, reveal: 650 },
+  timing: { focus: 2000, approach: 2200, environment: 1800, settle: 300, reveal: 1100 },
 };
 
 export const sceneTransitions: Partial<Record<RoomId, SceneTransitionConfig>> = {
@@ -26,6 +32,16 @@ export const sceneTransitions: Partial<Record<RoomId, SceneTransitionConfig>> = 
 };
 
 export type EntryPhase = "preparing" | "focus" | "approach" | "environment" | "settle" | "reveal";
+
+export function pickSceneImage(
+  choices: readonly string[],
+  previous?: string | null,
+  random: () => number = Math.random,
+) {
+  if (!choices.length) throw new Error("A scene transition needs at least one image.");
+  const available = choices.length > 1 ? choices.filter((image) => image !== previous) : [...choices];
+  return available[Math.min(available.length - 1, Math.floor(random() * available.length))];
+}
 
 /** Abortable waits: cancellation cannot commit a stale destination later. */
 export function waitForEntry(ms: number, signal: AbortSignal): Promise<void> {

@@ -1,26 +1,32 @@
 import assert from "node:assert/strict";
 import test, { after } from "node:test";
-import { access, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { createServer } from "vite";
 import { fileURLToPath } from "node:url";
 
 const vite = await createServer({ appType: "custom", configFile: false,
   root: fileURLToPath(new URL("..", import.meta.url)), server: { middlewareMode: true } });
 after(() => vite.close());
-const { cinemaTransition, runSceneEntry, sceneTransitions } =
+const { cinemaTransition, pickSceneImage, runSceneEntry, sceneTransitions } =
   await vite.ssrLoadModule("/lib/garden/scene-transitions.ts");
 const fastConfig = { ...cinemaTransition,
   timing: { focus: 1, approach: 1, environment: 1, settle: 1, reveal: 1 } };
 
-test("only Cinema opts in and its real local image and license are available", async () => {
+test("only Cinema opts in with the five user-provided local image paths", async () => {
   assert.deepEqual(Object.keys(sceneTransitions), ["cinema"]);
-  await access(new URL("../public" + cinemaTransition.image, import.meta.url));
-  const license = await readFile(new URL("../public/images/cinema/ATTRIBUTION.md", import.meta.url), "utf8");
-  assert.match(license, /BardiaSaeedi/);
-  assert.match(license, /CC BY-SA 4.0/);
+  assert.deepEqual(cinemaTransition.images, [1, 2, 3, 4, 5].map((n) => `/images/cinema/${n}.webp`));
   const content = await readFile(new URL("../components/garden/rooms.tsx", import.meta.url), "utf8");
   for (const title of ["The art of noticing", "A different kind of window", "Rooms we return to"])
     assert.ok(content.includes(title));
+});
+test("image selection avoids the immediately previous path", () => {
+  assert.equal(pickSceneImage(cinemaTransition.images, null, () => 0), cinemaTransition.images[0]);
+  assert.equal(pickSceneImage(cinemaTransition.images, cinemaTransition.images[0], () => 0), cinemaTransition.images[1]);
+  assert.equal(pickSceneImage(["only"], "only", () => 0.9), "only");
+});
+test("the full-motion entry is deliberately paced", () => {
+  assert.equal(Object.values(cinemaTransition.timing).reduce((sum, value) => sum + value, 0), 7400);
+  assert.equal(cinemaTransition.timing.focus + cinemaTransition.timing.approach, 4200);
 });
 test("room commit happens only behind the environment, before reveal", async () => {
   const events = [];

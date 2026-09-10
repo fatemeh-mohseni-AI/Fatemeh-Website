@@ -1,11 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { runSceneEntry, type EntryPhase, type SceneTransitionConfig } from "@/lib/garden/scene-transitions";
+import {
+  pickSceneImage,
+  runSceneEntry,
+  type EntryPhase,
+  type SceneTransitionConfig,
+} from "@/lib/garden/scene-transitions";
 import type { RoomId } from "@/lib/garden/content";
 
 type EntryRequest = {
   config: SceneTransitionConfig;
+  image: string;
   reduced: boolean;
   origin: { x: number; y: number };
 };
@@ -40,7 +46,9 @@ export function useSceneTransition({ commit, preload, notify }: {
   const [request, setRequest] = useState<EntryRequest | null>(null);
   const [phase, setPhase] = useState<EntryPhase>("preparing");
   const [imageReady, setImageReady] = useState(false);
+  const [sceneImage, setSceneImage] = useState<string | null>(null);
   const locked = useRef(false);
+  const lastImage = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const trigger = useRef<HTMLElement | null>(null);
 
@@ -49,15 +57,22 @@ export function useSceneTransition({ commit, preload, notify }: {
     locked.current = false;
     setRequest(null);
   }, []);
+  const selectImage = useCallback((config: SceneTransitionConfig) => {
+    const image = pickSceneImage(config.images, lastImage.current);
+    lastImage.current = image;
+    setSceneImage(image);
+    return image;
+  }, []);
   const start = useCallback((config: SceneTransitionConfig, reduced: boolean, origin = config.hotspot) => {
     if (locked.current) return false;
     locked.current = true; // synchronous: two clicks before React renders still start once.
     trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const image = selectImage(config);
     setPhase("preparing");
     setImageReady(false);
-    setRequest({ config, reduced, origin });
+    setRequest({ config, image, reduced, origin });
     return true;
-  }, []);
+  }, [selectImage]);
 
   useEffect(() => {
     if (!request) return;
@@ -65,7 +80,7 @@ export function useSceneTransition({ commit, preload, notify }: {
     abortRef.current = controller;
     let timeout: ReturnType<typeof setTimeout>;
     const prepare = Promise.race([
-      Promise.all([preload(), prepareSceneImage(request.config.image)]),
+      Promise.all([preload(), prepareSceneImage(request.image)]),
       new Promise<never>((_, reject) => { timeout = setTimeout(() => reject(new Error("Loading timed out")), 8000); }),
     ]);
     void (async () => {
@@ -103,5 +118,5 @@ export function useSceneTransition({ commit, preload, notify }: {
     return () => { controller.abort(); clearTimeout(timeout!); };
   }, [request, commit, preload, notify]);
 
-  return { request, phase, imageReady, start, cancel, isLocked: () => locked.current };
+  return { request, phase, imageReady, sceneImage, selectImage, start, cancel, isLocked: () => locked.current };
 }

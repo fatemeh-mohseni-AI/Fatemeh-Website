@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import type { RoomId } from "@/lib/garden/content";
+import { cinemaTransition } from "@/lib/garden/scene-transitions";
 
 export default function SpatialGarden({
   reduced,
@@ -313,9 +314,9 @@ export default function SpatialGarden({
       if (!document.hidden) {
         if (entryActive.current) {
           if (!entryStart) entryStart = { time: t, position: camera.position.clone(), yaw, pitch };
-          // A short camera cue toward the existing west-side cinema doorway.
-          const p = THREE.MathUtils.clamp((t - entryStart.time) / 1300, 0, 1);
-          const ease = p * p * (3 - 2 * p);
+          const duration = cinemaTransition.timing.focus + cinemaTransition.timing.approach;
+          const p = THREE.MathUtils.clamp((t - entryStart.time) / duration, 0, 1);
+          const ease = 1 - Math.pow(1 - p, 3);
           camera.position.lerpVectors(entryStart.position, new THREE.Vector3(-7.2, 1.7, -1), ease);
           const wantedYaw = Math.atan2(10 + camera.position.x, 1 + camera.position.z);
           const deltaYaw = Math.atan2(Math.sin(wantedYaw - entryStart.yaw), Math.cos(wantedYaw - entryStart.yaw));

@@ -1,4 +1,10 @@
-# Cinema environment photograph
+# Cinema environment photographs
+
+## User-supplied rotation (`1.webp` through `5.webp`)
+
+These five files were supplied directly for the Cinema background rotation. Their original source and reuse terms were not included with the upload. Record the photographer/source and permission or license for each file before a public release.
+
+## Previous background (`bagh-ferdows.webp`)
 
 **Baghe Ferdows (Ferdows Garden) Cinema Museum** by **BardiaSaeedi**.
 

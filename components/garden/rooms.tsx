@@ -42,6 +42,7 @@ import {
 } from "@/lib/garden/data";
 import { useData } from "./use-data";
 import { TravelDetail, TravelPlaceButton } from "./travel-place-ui";
+import { BaghFerdowsStory } from "./scene-transition";
 const Globe = lazy(() => import("./globe"));
 type Props = {
   id: RoomId;
@@ -483,6 +484,7 @@ function Cinema({ reduced, discover }: Props) {
         </h1>
         <p>A small programme of light, place, and perspective.</p>
       </div>
+      <BaghFerdowsStory />
       <div className="cinema-screen">
         <img key={film.image} src={film.image} alt={film.theme} />
         <div className="projection-shade" />
@@ -535,11 +537,6 @@ function Cinema({ reduced, discover }: Props) {
       </div>
       <p className="data-note cinema-note">
         Three original visual essays using the garden’s concept imagery.
-      </p>
-      <p className="cinema-image-credit">
-        Garden backdrop: <a href="https://commons.wikimedia.org/wiki/File:Baghe_Ferdows_(Ferdows_Garden)_Cinema_Museum.jpg" target="_blank" rel="noopener noreferrer">Bagh-e Ferdows — BardiaSaeedi</a>,{" "}
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.
-        Resized, cropped and softened.
       </p>
     </div>
   );
