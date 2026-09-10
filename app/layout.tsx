@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./cinema-transition.css";
 
 export const metadata: Metadata = {
   title: "Fatemeh Mohseni — A Little World of My Own",

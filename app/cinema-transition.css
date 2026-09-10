@@ -1,0 +1,69 @@
+/* Cinema entry is layered over the existing shell, never a second router. */
+.garden-content-shell { display: contents; }
+.scene-environment { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: #12201a; }
+.scene-environment > img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 48%; transform: scale(1.06); }
+.scene-environment__shade { position: absolute; inset: 0; background: linear-gradient(180deg, #14221a40, #111b17c9), radial-gradient(ellipse at 50% 42%, transparent 10%, #0a181972); }
+.cinema-environment { z-index: 1; }
+.cinema-environment > img { filter: blur(5px) saturate(.62) brightness(.58); }
+.cinema-environment .scene-environment__shade { background: linear-gradient(#0d1b17a6, #0e1916b8), radial-gradient(ellipse at 50% 35%, #543e2020, #0e1818a8); }
+.room-cinema .room-content { background: transparent; animation: cinema-content-in 650ms ease both; }
+.room-cinema .section-title, .room-cinema .film-programme { text-shadow: 0 2px 18px #0008; }
+.is-entering-scene:not([data-entry-phase="reveal"]) .room-content { animation: none; }
+.cinema-image-credit { display: block; margin: 12px auto 0; max-width: 650px; text-align: center; font-size: .75rem; line-height: 1.6; color: #dacfb9; }
+.cinema-image-credit a { text-decoration: underline; text-underline-offset: 3px; }
+
+.hotspot-cinema .hotspot-icon { transition: transform 240ms ease, box-shadow 240ms ease, background 240ms ease; }
+.hotspot-cinema:is(:hover, :focus-visible) .hotspot-icon { transform: scale(1.09); background: #cfad6c2b; box-shadow: 0 0 0 7px #d8b7790c, 0 0 26px #dfb56936; }
+.hotspot-cinema:is(:hover, :focus-visible) .hotspot-label { color: #ffe6b7; }
+
+.scene-entry { position: absolute; inset: 0; z-index: 90; overflow: hidden; }
+.scene-entry__environment { position: absolute; inset: 0; opacity: 0; background: #14251e; transition: opacity 700ms ease; }
+.scene-entry__environment .scene-environment > img { transform: scale(1.02); filter: saturate(.78) brightness(.8); transition: transform 1600ms cubic-bezier(.2,.5,.3,1), filter 700ms ease; }
+.scene-entry[data-phase="environment"] .scene-entry__environment,
+.scene-entry[data-phase="settle"] .scene-entry__environment { opacity: 1; }
+.scene-entry:is([data-phase="environment"], [data-phase="settle"], [data-phase="reveal"]) .scene-environment > img { transform: scale(1.06); }
+.scene-entry[data-phase="settle"] .scene-environment > img,
+.scene-entry[data-phase="reveal"] .scene-environment > img { filter: blur(5px) saturate(.62) brightness(.58); }
+.scene-entry[data-phase="reveal"] .scene-entry__environment { opacity: 0; transition-duration: 650ms; }
+.scene-entry__vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 45% 55%, transparent 22%, #101911a6 100%); opacity: 0; transition: opacity 650ms ease; }
+.scene-entry:is([data-phase="focus"], [data-phase="approach"], [data-phase="environment"]) .scene-entry__vignette { opacity: 1; }
+.scene-entry__caption { position: absolute; left: 50%; top: 73%; width: min(90%, 500px); transform: translateX(-50%); text-align: center; color: #f4e5c7; text-shadow: 0 2px 20px #000b; opacity: 1; transition: opacity 350ms ease; }
+.scene-entry__caption > span { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3.5rem); }
+.scene-entry__caption p { font-size: 1rem; margin-top: 7px; }
+.scene-entry__caption small { display: block; margin-top: 5px; font-size: .8125rem; letter-spacing: .12em; }
+.scene-entry[data-phase="preparing"] .scene-entry__caption > span,
+.scene-entry[data-phase="preparing"] .scene-entry__caption small { visibility: hidden; }
+.scene-entry:is([data-phase="settle"], [data-phase="reveal"]) .scene-entry__caption { opacity: 0; }
+.scene-entry__cancel { position: absolute; right: 5%; bottom: 5%; min-height: 44px; padding: 10px 18px; border: 1px solid #debd774f; border-radius: 999px; background: #10261ee6; font-size: .875rem; color: #f2ddb6; }
+
+/* Transform the outer image surface, retaining the visitor's inner pan/zoom. */
+.is-entering-scene:not([data-entry-reduced]) .camera-surface { transition: transform 650ms cubic-bezier(.3,.1,.2,1); will-change: transform; }
+.is-entering-scene:not([data-entry-reduced])[data-entry-phase="focus"] .camera-surface {
+  transform: translate(clamp(-14vw, calc(var(--entry-x) * 1.28), 14vw), clamp(-14vh, calc(var(--entry-y) * 1.28), 14vh)) scale(1.28);
+}
+.is-entering-scene:not([data-entry-reduced]):is([data-entry-phase="approach"], [data-entry-phase="environment"]) .camera-surface {
+  transform: translate(clamp(-62.5vw, calc(var(--entry-x) * 2.25), 62.5vw), clamp(-62.5vh, calc(var(--entry-y) * 2.25), 62.5vh)) scale(2.25);
+}
+.is-entering-scene:not([data-entry-phase="preparing"]) :is(.courtyard-welcome, .hotspots, .exploration-tools, .touch-pad, .scene-location) { opacity: 0; transition: opacity 350ms ease; pointer-events: none; }
+.is-entering-scene[data-entry-phase="reveal"] .room-content { animation: cinema-content-in 650ms ease both; }
+.scene-entry--reduced .scene-entry__environment { transition-duration: 120ms; }
+.scene-entry--reduced[data-phase="reveal"] .scene-entry__environment { transition-duration: 160ms; }
+.scene-entry--reduced .scene-environment > img { transition: none; transform: scale(1.06); }
+.scene-entry--reduced .scene-entry__vignette { display: none; }
+.scene-entry--reduced .scene-entry__caption { transition: none; }
+[data-entry-reduced] .room-content { animation: none !important; }
+@keyframes cinema-content-in { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 650px) {
+  .is-entering-scene:not([data-entry-reduced])[data-entry-phase="focus"] .camera-surface {
+    transform: translate(clamp(-8vw, var(--entry-x), 8vw), clamp(-8vh, var(--entry-y), 8vh)) scale(1.16);
+  }
+  .is-entering-scene:not([data-entry-reduced]):is([data-entry-phase="approach"], [data-entry-phase="environment"]) .camera-surface {
+    transform: translate(clamp(-35vw, calc(var(--entry-x) * 1.7), 35vw), clamp(-35vh, calc(var(--entry-y) * 1.7), 35vh)) scale(1.7);
+  }
+  .scene-entry__caption { top: 67%; }
+  .cinema-environment > img { filter: blur(3px) saturate(.62) brightness(.58); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-entering-scene .camera-surface { transform: none !important; transition: none; }
+  .scene-entry *, .room-cinema .room-content { animation: none !important; transition: none !important; }
+}

@@ -48,6 +48,7 @@ type Props = {
   reduced: boolean;
   discover: (id: string) => void;
   notify: (message: string) => void;
+  deferFocus?: boolean;
 };
 function CollectionStatus({
   error,
@@ -69,8 +70,9 @@ function CollectionStatus({
 }
 export default function Room(props: Props) {
   useEffect(() => {
-    document.querySelector<HTMLElement>(".room-content h1")?.focus();
-  }, [props.id]);
+    if (!props.deferFocus)
+      document.querySelector<HTMLElement>(".room-content h1")?.focus({ preventScroll: true });
+  }, [props.id, props.deferFocus]);
   switch (props.id) {
     case "library":
       return <Library {...props} />;
@@ -533,6 +535,11 @@ function Cinema({ reduced, discover }: Props) {
       </div>
       <p className="data-note cinema-note">
         Three original visual essays using the garden’s concept imagery.
+      </p>
+      <p className="cinema-image-credit">
+        Garden backdrop: <a href="https://commons.wikimedia.org/wiki/File:Baghe_Ferdows_(Ferdows_Garden)_Cinema_Museum.jpg" target="_blank" rel="noopener noreferrer">Bagh-e Ferdows — BardiaSaeedi</a>,{" "}
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.
+        Resized, cropped and softened.
       </p>
     </div>
   );

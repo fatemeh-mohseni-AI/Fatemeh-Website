@@ -45,7 +45,11 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { discoveries, rooms, type RoomId } from "@/lib/garden/content";
-const Room = lazy(() => import("./rooms"));
+import { cinemaTransition, sceneTransitions } from "@/lib/garden/scene-transitions";
+import { SceneEnvironment, SceneTransition } from "./scene-transition";
+import { prepareSceneImage, useSceneTransition } from "./use-scene-transition";
+const loadRoom = () => import("./rooms");
+const Room = lazy(loadRoom);
 const SpatialGarden = lazy(() => import("./spatial-garden"));
 const roomIcons = {
   courtyard: Flower2,
@@ -105,7 +109,7 @@ export default function Garden() {
       setStorageAvailable(false);
     }
   }, [stamps, journalReady]);
-  const goTo = useCallback(
+  const commitRoom = useCallback(
     (id: RoomId) => {
       setRoom(id);
       setEntered(true);
@@ -114,10 +118,37 @@ export default function Garden() {
       setSpatial(false);
       if (id === "courtyard") discover("garden");
       window.history.replaceState(null, "", `#${id}`);
-      requestAnimationFrame(() => mainHeading.current?.focus());
+      if (id === "courtyard")
+        requestAnimationFrame(() => mainHeading.current?.focus());
     },
     [discover],
   );
+
+  const entry = useSceneTransition({ commit: commitRoom, preload: loadRoom, notify });
+  const warmCinema = () => {
+    void loadRoom().catch(() => {});
+    void prepareSceneImage(cinemaTransition.image);
+  };
+  const goTo = (id: RoomId) => {
+    if (entry.isLocked()) return;
+    const config = sceneTransitions[id];
+    if (entered && room === "courtyard" && config) {
+      setModal(null);
+      drag.current = null;
+      setIsDragging(false);
+      // The actual hotspot includes responsive offsets and the current view pan.
+      const bounds = document.querySelector(`.hotspot-${id}`)?.getBoundingClientRect();
+      const origin = bounds && !spatial ? {
+        x: clamp((bounds.left + bounds.width / 2) / window.innerWidth, 0.05, 0.95),
+        y: clamp((bounds.top + bounds.height / 2) / window.innerHeight, 0.05, 0.95),
+      } : config.hotspot;
+      entry.start(config, reduced || window.matchMedia("(prefers-reduced-motion: reduce)").matches, origin);
+    } else commitRoom(id);
+  };
+  const cancelEntry = () => {
+    entry.cancel();
+    commitRoom("courtyard");
+  };
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -145,10 +176,13 @@ export default function Garden() {
     };
     media.addEventListener("change", update);
     const hash = window.location.hash.slice(1);
-    if (rooms.some((r) => r.id === hash)) goTo(hash as RoomId);
+    if (rooms.some((r) => r.id === hash)) commitRoom(hash as RoomId);
     const onHash = () => {
       const value = window.location.hash.slice(1);
-      if (rooms.some((r) => r.id === value)) goTo(value as RoomId);
+      if (rooms.some((r) => r.id === value)) {
+        entry.cancel();
+        commitRoom(value as RoomId);
+      }
     };
     window.addEventListener("hashchange", onHash);
     return () => {
@@ -156,7 +190,7 @@ export default function Garden() {
       window.removeEventListener("hashchange", onHash);
       if (toastTimer.current) clearTimeout(toastTimer.current);
     };
-  }, [goTo]);
+  }, [commitRoom, entry.cancel]);
   useEffect(() => {
     if (entered) discover("garden");
   }, [entered, discover]);
@@ -200,7 +234,7 @@ export default function Garden() {
     };
   }, [entered, modal, reduced]);
   useEffect(() => {
-    if (!entered || room !== "courtyard" || modal || spatial) return;
+    if (!entered || room !== "courtyard" || modal || spatial || entry.request) return;
     const down = (e: KeyboardEvent) => {
       if (
         e.target instanceof HTMLElement &&
@@ -248,7 +282,7 @@ export default function Garden() {
     };
     window.addEventListener("keydown", down);
     return () => window.removeEventListener("keydown", down);
-  }, [entered, room, modal, spatial]);
+  }, [entered, room, modal, spatial, entry.request]);
   useEffect(() => {
     if (!sound) return;
     const context = new AudioContext();
@@ -338,8 +372,16 @@ export default function Garden() {
 
   return (
     <main
-      className={`garden-app ${entered ? "has-entered" : "at-gate"} ${reduced ? "reduced-motion" : ""} room-${room}`}
+      className={`garden-app ${entered ? "has-entered" : "at-gate"} ${reduced ? "reduced-motion" : ""} room-${room} ${entry.request ? "is-entering-scene" : ""}`}
+      data-entry-phase={entry.request ? entry.phase : undefined}
+      data-entry-reduced={entry.request?.reduced || undefined}
+      data-entry-spatial={entry.request && spatial ? true : undefined}
+      style={entry.request ? {
+        "--entry-x": `${(0.5 - entry.request.origin.x) * 100}vw`,
+        "--entry-y": `${(0.5 - entry.request.origin.y) * 100}vh`,
+      } as CSSProperties : undefined}
     >
+      <div className="garden-content-shell" inert={!!entry.request} aria-busy={!!entry.request}>
       <a
         className="skip-link"
         href="#room-navigation"
@@ -351,6 +393,7 @@ export default function Garden() {
         {entered ? current.name : "The entrance gate"}
       </span>
       <div className="world-underlay" aria-hidden="true" />
+      {room === "cinema" && <SceneEnvironment image={cinemaTransition.image} className="cinema-environment" />}
       <header className="world-header">
         <button
           className="brand"
@@ -411,6 +454,7 @@ export default function Garden() {
           >
             <SpatialGarden
               reduced={reduced}
+              enteringCinema={!!entry.request && !entry.request.reduced && entry.phase !== "preparing"}
               onRoom={goTo}
               onSecret={discoverSecret}
             />
@@ -475,6 +519,8 @@ export default function Garden() {
                       className={`hotspot hotspot-${id}`}
                       style={{ left: `${x}%`, top: `${y}%` }}
                       onClick={() => goTo(id)}
+                      onPointerEnter={id === "cinema" ? warmCinema : undefined}
+                      onFocus={id === "cinema" ? warmCinema : undefined}
                     >
                       <span className="hotspot-icon">
                         <Icon size={18} strokeWidth={1.4} />
@@ -557,7 +603,7 @@ export default function Garden() {
       </section>
 
       {entered && room !== "courtyard" && (
-        <section key={room} className="room-content">
+        <section key={room} className="room-content" aria-label={current.name}>
           <div className="room-topline">
             <button className="quiet-link" onClick={() => goTo("courtyard")}>
               <ArrowLeft size={17} /> Back to the courtyard
@@ -576,6 +622,7 @@ export default function Garden() {
               reduced={reduced}
               discover={discover}
               notify={notify}
+              deferFocus={!!entry.request}
             />
           </Suspense>
         </section>
@@ -685,6 +732,8 @@ export default function Garden() {
                 <button
                   key={r.id}
                   onClick={() => goTo(r.id)}
+                  onPointerEnter={r.id === "cinema" ? warmCinema : undefined}
+                  onFocus={r.id === "cinema" ? warmCinema : undefined}
                   className={room === r.id ? "active" : ""}
                   aria-current={room === r.id ? "page" : undefined}
                 >
@@ -960,6 +1009,14 @@ export default function Garden() {
           )}
         </DialogContent>
       </Dialog>
+      </div>
+      {entry.request && <SceneTransition
+        config={entry.request.config}
+        phase={entry.phase}
+        imageReady={entry.imageReady}
+        reduced={entry.request.reduced}
+        onCancel={cancelEntry}
+      />}
     </main>
   );
 }

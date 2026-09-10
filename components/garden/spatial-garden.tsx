@@ -8,15 +8,22 @@ export default function SpatialGarden({
   reduced,
   onRoom,
   onSecret,
+  enteringCinema = false,
 }: {
   reduced: boolean;
   onRoom: (room: RoomId) => void;
   onSecret: () => void;
+  enteringCinema?: boolean;
 }) {
   const host = useRef<HTMLDivElement>(null),
     pressed = useRef(new Set<string>()),
     callbacks = useRef({ onRoom, onSecret });
   callbacks.current = { onRoom, onSecret };
+  const entryActive = useRef(false);
+  useEffect(() => {
+    entryActive.current = enteringCinema;
+    if (enteringCinema) pressed.current.clear();
+  }, [enteringCinema]);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     if (!host.current) return;
@@ -298,12 +305,26 @@ export default function SpatialGarden({
         if (valid(zOnly)) camera.position.copy(zOnly);
       }
     };
+    let entryStart: { time: number; position: THREE.Vector3; yaw: number; pitch: number } | null = null;
     const render = (t: number) => {
       if (!alive) return;
       const dt = previous ? Math.min((t - previous) / 1000, 0.05) : 0;
       previous = t;
       if (!document.hidden) {
-        move(dt);
+        if (entryActive.current) {
+          if (!entryStart) entryStart = { time: t, position: camera.position.clone(), yaw, pitch };
+          // A short camera cue toward the existing west-side cinema doorway.
+          const p = THREE.MathUtils.clamp((t - entryStart.time) / 1300, 0, 1);
+          const ease = p * p * (3 - 2 * p);
+          camera.position.lerpVectors(entryStart.position, new THREE.Vector3(-7.2, 1.7, -1), ease);
+          const wantedYaw = Math.atan2(10 + camera.position.x, 1 + camera.position.z);
+          const deltaYaw = Math.atan2(Math.sin(wantedYaw - entryStart.yaw), Math.cos(wantedYaw - entryStart.yaw));
+          yaw = entryStart.yaw + deltaYaw * ease;
+          pitch = entryStart.pitch * (1 - ease);
+        } else {
+          entryStart = null;
+          move(dt);
+        }
         camera.rotation.set(pitch, yaw, 0);
         if (!reduced) {
           waterUniforms.time.value = t / 1000;
@@ -317,6 +338,7 @@ export default function SpatialGarden({
       raf = requestAnimationFrame(render);
     };
     const keydown = (e: KeyboardEvent) => {
+      if (entryActive.current) return;
       if (
         (e.target as HTMLElement)?.closest(
           'button,input,textarea,select,[role="dialog"]',
@@ -344,12 +366,14 @@ export default function SpatialGarden({
     const clear = () => keys.clear();
     const raycaster = new THREE.Raycaster();
     const down = (e: PointerEvent) => {
+      if (entryActive.current) return;
       start = { x: e.clientX, y: e.clientY };
       last = start;
       dragging = true;
       renderer.domElement.setPointerCapture(e.pointerId);
     };
     const pointermove = (e: PointerEvent) => {
+      if (entryActive.current) return;
       if (!dragging) return;
       yaw -= (e.clientX - last.x) * 0.003;
       pitch = THREE.MathUtils.clamp(
@@ -360,6 +384,7 @@ export default function SpatialGarden({
       last = { x: e.clientX, y: e.clientY };
     };
     const up = (e: PointerEvent) => {
+      if (entryActive.current) { dragging = false; return; }
       dragging = false;
       if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 7) return;
       const rect = renderer.domElement.getBoundingClientRect();
