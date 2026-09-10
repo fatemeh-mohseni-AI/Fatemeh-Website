@@ -2,13 +2,16 @@ import { z } from "zod";
 export const locationSchema = z.object({
   id: z.string().min(1).max(100),
   name: z.string().min(1).max(120),
+  country: z.string().min(1).max(120).default("Imported place"),
+  label: z.string().min(1).max(120).optional(),
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
-  type: z.enum(["visited", "dream_destination", "meaningful_location"]),
+  type: z.enum(["home", "visited", "dream"]),
   description: z.string().max(2000).default(""),
-  image: z.string().default(""),
+  shortNote: z.string().max(240).optional(),
+  markerIcon: z.enum(["home", "compass", "star"]).optional(),
+  images: z.array(z.string().startsWith("/images/")).max(12).default([]),
   googleEarthLink: z.string().default(""),
-  sample: z.boolean().default(false),
 });
 export const locationsSchema = z
   .array(locationSchema)
@@ -88,10 +91,14 @@ export function parseKml(text: string): Location[] {
     const parsed = locationSchema.safeParse({
       id: `import-${i}`,
       name,
+      country: "Imported from KML",
       longitude,
       latitude,
       description,
-      type: "meaningful_location",
+      shortNote: "A place from your Google Earth file.",
+      markerIcon: "compass",
+      images: [],
+      type: "visited",
     });
     if (parsed.success) result.push(parsed.data);
   }

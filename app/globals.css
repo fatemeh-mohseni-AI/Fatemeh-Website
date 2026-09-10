@@ -2763,6 +2763,545 @@ a svg {
     padding: 13px 16px;
   }
 }
+
+/* Travel Observatory — a globe-first personal atlas. */
+.travel-room {
+  width: min(100%, 1540px);
+  max-width: none;
+  margin: -8px auto 0;
+}
+.travel-heading {
+  text-align: center;
+  margin: 0 auto -18px;
+}
+.travel-heading h1 {
+  font-size: clamp(2.25rem, 3.8vw, 4.1rem);
+  white-space: nowrap;
+}
+.travel-heading > p:last-child {
+  max-width: 620px;
+  margin: 10px auto 0;
+  color: #d8d0be;
+  opacity: 0.68;
+}
+.observatory-layout {
+  display: grid;
+  grid-template-columns: minmax(190px, 245px) minmax(490px, 1fr) minmax(200px, 260px);
+  grid-template-areas: "visited globe dreams";
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 46px);
+  margin-top: 0;
+}
+.earth-column {
+  grid-area: globe;
+  width: 100%;
+  min-width: 0;
+  position: relative;
+  align-self: center;
+}
+.globe-stage {
+  position: relative;
+  height: clamp(510px, 64vh, 720px);
+  max-height: none;
+  min-height: 510px;
+  isolation: isolate;
+}
+.globe-stage::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8% 4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #6baf9c16 0, #315f5110 38%, transparent 70%);
+  filter: blur(10px);
+}
+.globe-canvas {
+  z-index: 2;
+}
+.globe-canvas canvas:focus-visible {
+  outline: 1px solid #d4b77d;
+  outline-offset: -14px;
+  border-radius: 50%;
+}
+.globe-orbit {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 48%;
+  pointer-events: none;
+  border: 1px solid #d4b77d1f;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-11deg);
+}
+.globe-orbit--outer {
+  width: min(76%, 640px);
+  height: min(25%, 160px);
+}
+.globe-orbit--inner {
+  width: min(63%, 530px);
+  height: min(18%, 112px);
+  border-color: #83bbae17;
+  transform: translate(-50%, -50%) rotate(14deg);
+}
+.globe-controls {
+  z-index: 4;
+  bottom: 35px;
+  border-color: #d6bd8952;
+  border-radius: 999px;
+  background: #102a22d9;
+  box-shadow: 0 16px 40px #07171255;
+  backdrop-filter: blur(12px);
+}
+.globe-controls button {
+  width: 43px;
+  height: 39px;
+}
+.globe-controls button + button {
+  border-left: 1px solid #d6bd8926;
+}
+.globe-help {
+  z-index: 3;
+  bottom: 5px;
+  color: #ddd2bd;
+  opacity: 0.48;
+}
+.earth-credit {
+  margin-top: -2px;
+  color: #d8cbb4;
+}
+.place-rail {
+  align-self: center;
+  min-width: 0;
+  padding: 4px 0;
+}
+.place-rail--visited {
+  grid-area: visited;
+}
+.place-rail--dreams {
+  grid-area: dreams;
+}
+.place-rail__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+  border-bottom: 1px solid #d2bb8b42;
+  color: #d9c69e;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+}
+.place-rail__heading span:last-child {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #d2bb8b40;
+  border-radius: 50%;
+  color: #efe4cf;
+  letter-spacing: 0;
+}
+.place-rail__list {
+  border-bottom: 1px solid #d2bb8b2b;
+}
+.atlas-place {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 67px;
+  padding: 10px 3px;
+  text-align: left;
+  border-bottom: 1px solid #c8b88f21;
+  transition: color 180ms ease, padding 180ms ease, background 180ms ease;
+}
+.atlas-place:last-child {
+  border-bottom: 0;
+}
+.atlas-place:hover,
+.atlas-place.is-selected {
+  padding-left: 8px;
+  background: linear-gradient(90deg, #d5bc8710, transparent);
+}
+.atlas-place__marker {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: #d7b978;
+  box-shadow: 0 0 0 4px #d7b97809;
+}
+.atlas-place--home .atlas-place__marker {
+  color: #f0e4c9;
+  background: #f0e4c911;
+}
+.atlas-place--visited .atlas-place__marker {
+  color: #76bbae;
+  background: #76bbae0e;
+}
+.atlas-place--dream .atlas-place__marker {
+  color: #d8b267;
+  background: #d8b2670d;
+}
+.atlas-place__copy {
+  min-width: 0;
+}
+.atlas-place__copy strong,
+.atlas-place__copy span {
+  display: block;
+}
+.atlas-place__copy strong {
+  overflow: hidden;
+  color: #f0e9da;
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  font-weight: 400;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.atlas-place__copy span {
+  overflow: hidden;
+  margin-top: 3px;
+  color: #d6ccb9;
+  font-size: 0.75rem;
+  opacity: 0.55;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.atlas-place__compass {
+  color: #d9c69e;
+  opacity: 0;
+  transform: rotate(-28deg);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.atlas-place:hover .atlas-place__compass,
+.atlas-place.is-selected .atlas-place__compass {
+  opacity: 0.75;
+  transform: rotate(0);
+}
+.atlas-place.is-selected .atlas-place__copy strong {
+  color: #e6c98e;
+}
+.travel-detail {
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  bottom: 64px;
+  width: min(370px, 48%);
+  max-height: min(510px, 69vh);
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid #d9c08b50;
+  border-radius: 7px;
+  background:
+    linear-gradient(145deg, #102a22f5, #142f27ed),
+    radial-gradient(circle at 0 0, #d8bd8516, transparent 45%);
+  box-shadow: 0 28px 70px #07151099;
+  backdrop-filter: blur(18px);
+  scrollbar-width: thin;
+  scrollbar-color: #c8ad744f transparent;
+  animation: atlas-card-in 320ms ease both;
+}
+.travel-detail__close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #d6bf9042;
+  border-radius: 50%;
+  color: #e4d8c1;
+}
+.travel-detail__close:hover {
+  background: #e2c78f14;
+}
+.travel-detail__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 40px;
+  color: #d8c398;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.travel-detail__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.travel-detail__meta span + span::before {
+  content: "·";
+  margin-right: 8px;
+  opacity: 0.5;
+}
+.travel-detail h2 {
+  margin-top: 11px;
+  padding-right: 36px;
+  color: #f3ead8;
+  font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+}
+.travel-detail__label {
+  margin-top: 3px;
+  color: #dfc184;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+.travel-detail__note {
+  margin-top: 8px;
+  color: #f0e5d1;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.travel-detail__description {
+  margin-top: 12px;
+  color: #e3d9c6;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  opacity: 0.78;
+}
+.travel-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 17px;
+}
+.travel-gallery figure {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  margin: 0;
+  border-radius: 3px;
+  background: #0b211b;
+}
+.travel-gallery img {
+  display: block;
+  width: 100%;
+  height: 78px;
+  object-fit: cover;
+  filter: saturate(0.66) contrast(0.95);
+  opacity: 0.73;
+}
+.travel-gallery figure::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid #f0dabf1f;
+  pointer-events: none;
+}
+.travel-gallery figcaption {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  padding: 2px 4px;
+  color: #fff5e4;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  background: #0b2019a6;
+}
+.travel-detail__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px solid #d0b98432;
+}
+.travel-detail .coordinates {
+  margin: 0;
+  line-height: 1.6;
+}
+.earth-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid #d8ba7d73;
+  border-radius: 999px;
+  color: #efd7a7;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+.earth-action:hover {
+  background: #d7b97616;
+  border-color: #e1c589aa;
+}
+.atlas-note {
+  padding: 24px 8px 4px;
+  text-align: left;
+}
+.atlas-note > span {
+  display: block;
+  font-size: 2.1rem;
+}
+.atlas-note p {
+  max-width: 180px;
+  margin-top: 4px;
+  font-size: 0.76rem;
+}
+.import-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top-color: #c9b38627;
+}
+.import-section .quiet-link {
+  min-height: 36px;
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+}
+.import-section .data-note {
+  font-size: 0.72rem;
+  line-height: 1.55;
+  opacity: 0.46;
+}
+@keyframes atlas-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1200px) {
+  .observatory-layout {
+    grid-template-columns: minmax(175px, 220px) minmax(420px, 1fr) minmax(180px, 225px);
+    gap: 12px;
+  }
+  .globe-stage {
+    height: clamp(480px, 59vh, 610px);
+    min-height: 480px;
+  }
+  .travel-detail {
+    width: min(340px, 51%);
+  }
+  .atlas-place {
+    min-height: 61px;
+  }
+}
+
+@media (max-width: 900px) {
+  .travel-room {
+    margin-top: 0;
+  }
+  .travel-heading {
+    margin-bottom: 5px;
+  }
+  .travel-heading h1 {
+    font-size: clamp(2.25rem, 7vw, 3.45rem);
+    white-space: normal;
+  }
+  .observatory-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "globe globe"
+      "visited dreams";
+    gap: 24px 28px;
+    margin-top: 0;
+  }
+  .globe-stage {
+    height: min(62vw, 520px);
+    min-height: 390px;
+  }
+  .travel-detail {
+    right: 2%;
+    width: min(360px, 49%);
+  }
+  .place-rail {
+    align-self: start;
+  }
+}
+
+@media (max-width: 650px) {
+  .travel-heading {
+    text-align: left;
+  }
+  .travel-heading h1 {
+    font-size: 2.55rem;
+    line-height: 1.05;
+  }
+  .travel-heading > p:last-child {
+    margin-left: 0;
+  }
+  .observatory-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+  .earth-column {
+    order: -1;
+  }
+  .globe-stage {
+    height: 355px;
+    min-height: 355px;
+    margin-inline: -4%;
+  }
+  .globe-help {
+    bottom: -2px;
+    padding-inline: 24px;
+    font-size: 0.68rem;
+  }
+  .globe-controls {
+    bottom: 38px;
+  }
+  .earth-credit {
+    margin-top: 7px;
+  }
+  .place-rail {
+    width: 100%;
+  }
+  .place-rail--visited {
+    order: 1;
+  }
+  .place-rail--dreams {
+    order: 2;
+  }
+  .travel-detail {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    max-height: none;
+    margin-top: 18px;
+  }
+  .travel-gallery img {
+    height: 92px;
+  }
+  .atlas-note {
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .globe-stage {
+    height: 330px;
+    min-height: 330px;
+  }
+  .travel-gallery img {
+    height: 76px;
+  }
+  .travel-detail__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .earth-action {
+    width: 100%;
+  }
+}
 @media (max-height: 700px) and (min-width: 601px) {
   .world-header {
     height: 83px;

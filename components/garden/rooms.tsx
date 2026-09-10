@@ -14,12 +14,10 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Compass,
   ExternalLink,
   FileUp,
   Film,
   Flower2,
-  MapPin,
   Pause,
   Play,
   RefreshCw,
@@ -34,7 +32,6 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { type RoomId } from "@/lib/garden/content";
 import {
-  earthLink,
   gallerySchema,
   locationsSchema,
   parseKml,
@@ -44,6 +41,7 @@ import {
   type Writing,
 } from "@/lib/garden/data";
 import { useData } from "./use-data";
+import { TravelDetail, TravelPlaceButton } from "./travel-place-ui";
 const Globe = lazy(() => import("./globe"));
 type Props = {
   id: RoomId;
@@ -171,25 +169,20 @@ function Library({ discover }: Props) {
     </div>
   );
 }
-const categoryLabels = {
-  visited: "Places visited",
-  dream_destination: "On the horizon",
-  meaningful_location: "Meaningful places",
-};
 function Travel({ reduced, discover, notify }: Props) {
   const { data, error, retry } = useData(
     "/data/locations.json",
     locationsSchema,
   );
   const [imported, setImported] = useState<Location[] | null>(null),
-    [filter, setFilter] = useState("all"),
     [selected, setSelected] = useState<string | null>(null),
     [importError, setImportError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const all = imported ?? data;
   const active = all?.find((p) => p.id === selected);
-  const visible =
-    all?.filter((p) => filter === "all" || p.type === filter) ?? [];
+  const homeAndVisited =
+    all?.filter((p) => p.type === "home" || p.type === "visited") ?? [];
+  const dreams = all?.filter((p) => p.type === "dream") ?? [];
   const importFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -201,7 +194,6 @@ function Travel({ reduced, discover, notify }: Props) {
       const places = parseKml(await file.text());
       setImported(places);
       setSelected(null);
-      setFilter("all");
       setImportError("");
       notify(`${places.length} places opened for this visit.`);
     } catch (error) {
@@ -223,11 +215,11 @@ function Travel({ reduced, discover, notify }: Props) {
       <div className="travel-heading">
         <p className="eyebrow">03 / TRAVEL OBSERVATORY</p>
         <h1 tabIndex={-1}>
-          The world is
-          <br />
-          <em>full of wonder.</em>
+          A private atlas of <em>near &amp; far.</em>
         </h1>
-        <p>A few places to begin. A thousand reasons to go.</p>
+        <p>
+          Places that shaped a story — and those still calling from the horizon.
+        </p>
       </div>
       <div className="observatory-layout">
         <div className="earth-column">
@@ -257,92 +249,56 @@ function Travel({ reduced, discover, notify }: Props) {
           >
             Earth imagery: NASA Blue Marble <ExternalLink size={11} />
           </a>
+          {active && (
+            <TravelDetail location={active} onClose={() => setSelected(null)} />
+          )}
         </div>
-        <aside className="destination-panel">
-          <div className="panel-eyebrow">
-            <Compass size={17} />
-            <span>
-              {imported ? "YOUR PLACES, THIS VISIT" : "A GROWING ATLAS"}
-            </span>
-            <span>{all?.length ?? "—"} places</span>
+        <aside
+          className="place-rail place-rail--visited"
+          aria-label="Home and visited places"
+        >
+          <div className="place-rail__heading">
+            <span>{imported ? "OPENED FROM KML" : "HOME & PLACES MET"}</span>
+            <span>{homeAndVisited.length}</span>
           </div>
-          <div
-            className="location-filters"
-            role="group"
-            aria-label="Filter places"
-          >
-            {[
-              ["all", "All"],
-              ["visited", "Visited"],
-              ["dream_destination", "Dreaming"],
-              ["meaningful_location", "Meaningful"],
-            ].map(([id, label]) => (
-              <button
-                key={id}
-                aria-pressed={filter === id}
-                onClick={() => setFilter(id)}
-              >
-                {label}
-              </button>
+          <div className="place-rail__list">
+            {homeAndVisited.map((place) => (
+              <TravelPlaceButton
+                key={place.id}
+                location={place}
+                selected={selected === place.id}
+                onSelect={choose}
+              />
             ))}
           </div>
-          <div className="destination-list">
-            {visible.map((p) => (
-              <button
-                className={`destination ${selected === p.id ? "selected" : ""}`}
-                key={p.id}
-                onClick={() => choose(p.id)}
-              >
-                <span className={`place-marker ${p.type}`}>
-                  <MapPin size={17} />
-                </span>
-                <div>
-                  <h2>{p.name}</h2>
-                  <p>{categoryLabels[p.type]}</p>
-                </div>
-                <ArrowRight size={16} />
-              </button>
-            ))}
-            {all && !visible.length && (
-              <p className="empty-places">
-                No places in this part of the atlas yet.
-              </p>
-            )}
-          </div>
-          {active ? (
-            <article className="destination-detail">
-              <p className="eyebrow">
-                {active.sample
-                  ? "EXAMPLE LOCATION"
-                  : categoryLabels[active.type]}
-              </p>
-              <h2>{active.name}</h2>
-              <p>{active.description}</p>
-              <span className="coordinates">
-                {Math.abs(active.latitude).toFixed(4)}°{" "}
-                {active.latitude >= 0 ? "N" : "S"} &nbsp;{" "}
-                {Math.abs(active.longitude).toFixed(4)}°{" "}
-                {active.longitude >= 0 ? "E" : "W"}
-              </span>
-              <a
-                className="quiet-link"
-                href={earthLink(active)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Explore in Google Earth <ExternalLink size={14} />
-              </a>
-            </article>
-          ) : (
+          {!active && (
             <div className="atlas-note">
               <span lang="fa">سفر</span>
-              <p>
-                Select a point on the globe
-                <br />
-                or a place in the atlas.
-              </p>
+              <p>Select a place to bring it into view.</p>
             </div>
           )}
+        </aside>
+        <aside
+          className="place-rail place-rail--dreams"
+          aria-label="Dream destinations"
+        >
+          <div className="place-rail__heading">
+            <span>{imported ? "TEMPORARY ATLAS" : "ON THE HORIZON"}</span>
+            <span>{dreams.length}</span>
+          </div>
+          <div className="place-rail__list">
+            {dreams.map((place) => (
+              <TravelPlaceButton
+                key={place.id}
+                location={place}
+                selected={selected === place.id}
+                onSelect={choose}
+              />
+            ))}
+            {!imported && all && !dreams.length && (
+              <p className="empty-places">No dream destinations yet.</p>
+            )}
+          </div>
           <div className="import-section">
             <input
               ref={fileRef}
@@ -363,7 +319,6 @@ function Travel({ reduced, discover, notify }: Props) {
                 onClick={() => {
                   setImported(null);
                   setSelected(null);
-                  setFilter("all");
                 }}
               >
                 Return to the garden atlas
@@ -372,7 +327,7 @@ function Travel({ reduced, discover, notify }: Props) {
             <p className="data-note">
               {imported
                 ? "Imported places stay in this tab and are not uploaded."
-                : "These example markers illustrate the atlas, not a personal travel history. KML imports stay in this tab."}
+                : "KML imports stay private to this browser tab."}
             </p>
             {importError && (
               <p role="alert" className="form-error">

@@ -39,10 +39,33 @@ test("all published collections are valid and reference available images", async
     ),
   );
   assert.ok(locations.length);
+  assert.deepEqual(
+    new Set(locations.map((place) => place.id)),
+    new Set([
+      "tehran",
+      "isfahan",
+      "stockholm",
+      "ankara",
+      "antarctica",
+      "paris",
+      "italy",
+      "amazon-rainforest",
+      "cape-town",
+    ]),
+  );
+  assert.equal(locations.find((place) => place.id === "tehran")?.type, "home");
+  assert.equal(
+    locations.find((place) => place.id === "isfahan")?.label,
+    "Half of the World",
+  );
+  assert.ok(locations.every((place) => place.images.length >= 3));
   assert.ok(writings.every((a) => a.body.length));
   assert.ok(gallery.length);
   for (const image of gallery)
     await access(new URL("../public" + image.src, import.meta.url));
+  for (const place of locations)
+    for (const image of place.images)
+      await access(new URL("../public" + image, import.meta.url));
   await access(new URL("../public/images/earth.webp", import.meta.url));
 });
 test("location boundary checks reject invalid coordinates and duplicate IDs", () => {
