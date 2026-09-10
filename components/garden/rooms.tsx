@@ -18,8 +18,6 @@ import {
   FileUp,
   Film,
   Flower2,
-  Pause,
-  Play,
   RefreshCw,
   Sparkles,
 } from "lucide-react";
@@ -30,6 +28,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import {
+  cinemaRecommendations,
+  cinemaWatchlist,
+  imdbRatingCheckedAt,
+} from "@/lib/garden/cinema-collection";
 import { type RoomId } from "@/lib/garden/content";
 import {
   gallerySchema,
@@ -438,43 +441,17 @@ function Gallery({ discover }: Props) {
     </div>
   );
 }
-const films = [
-  {
-    title: "The art of noticing",
-    eyebrow: "A SILENT VISUAL ESSAY",
-    image: "/images/courtyard.webp",
-    text: "Slow down. There is a whole world in the space between things.",
-    theme: "Light & stillness",
-  },
-  {
-    title: "A different kind of window",
-    eyebrow: "A STUDY IN COLOR",
-    image: "/images/door.webp",
-    text: "The same light. A hundred different ways of seeing it.",
-    theme: "Craft & perspective",
-  },
-  {
-    title: "Rooms we return to",
-    eyebrow: "AN ODE TO QUIET PLACES",
-    image: "/images/library.webp",
-    text: "Some places make a little more room for who we are becoming.",
-    theme: "Memory & belonging",
-  },
-];
-function Cinema({ reduced, discover }: Props) {
-  const [index, setIndex] = useState(0),
-    [playing, setPlaying] = useState(false);
-  const film = films[index];
-  useEffect(() => {
-    if (!playing || reduced) return;
-    const interval = setInterval(() => {
-      if (!document.hidden) setIndex((i) => (i + 1) % films.length);
-    }, 6500);
-    return () => clearInterval(interval);
-  }, [playing, reduced]);
-  useEffect(() => {
-    if (reduced) setPlaying(false);
-  }, [reduced]);
+function Cinema({ discover }: Props) {
+  const [index, setIndex] = useState(0);
+  const swipeStartX = useRef<number | null>(null);
+  const film = cinemaRecommendations[index];
+  const selectFilm = (nextIndex: number) => {
+    setIndex(
+      (nextIndex + cinemaRecommendations.length) % cinemaRecommendations.length,
+    );
+    discover("cinema");
+  };
+
   return (
     <div className="cinema-room">
       <div className="section-title">
@@ -482,61 +459,142 @@ function Cinema({ reduced, discover }: Props) {
         <h1 tabIndex={-1}>
           Through <em>another lens.</em>
         </h1>
-        <p>A small programme of light, place, and perspective.</p>
+        <p>Stories I keep returning to, and a few I am entering now.</p>
       </div>
       <BaghFerdowsStory />
-      <div className="cinema-screen">
-        <img key={film.image} src={film.image} alt={film.theme} />
-        <div className="projection-shade" />
-        <div className="film-caption">
-          <p className="eyebrow">{film.eyebrow}</p>
-          <h2>{film.title}</h2>
-          <p>{film.text}</p>
+      <section
+        className="cinema-collection"
+        aria-labelledby="cinema-recommendations-title"
+      >
+        <div className="cinema-collection-heading">
+          <div>
+            <p className="eyebrow">FATEMEH RECOMMENDS</p>
+            <h2 id="cinema-recommendations-title">Worth the watch.</h2>
+          </div>
+          <p>Films and series I would ask you not to miss.</p>
         </div>
-        <button
-          className="projection-play"
-          aria-label={
-            playing ? "Pause visual programme" : "Play visual programme"
-          }
-          onClick={() => {
-            if (reduced) {
-              setIndex((i) => (i + 1) % films.length);
-            } else setPlaying((v) => !v);
-            discover("cinema");
+        <div
+          className="cinema-screen recommendation-slider"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Recommended films and series"
+          tabIndex={0}
+          onPointerDown={(event) => {
+            swipeStartX.current = event.clientX;
+          }}
+          onPointerUp={(event) => {
+            if (swipeStartX.current === null) return;
+            const distance = event.clientX - swipeStartX.current;
+            swipeStartX.current = null;
+            if (Math.abs(distance) < 45) return;
+            selectFilm(index + (distance < 0 ? 1 : -1));
+          }}
+          onPointerCancel={() => {
+            swipeStartX.current = null;
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") selectFilm(index - 1);
+            if (event.key === "ArrowRight") selectFilm(index + 1);
           }}
         >
-          {playing ? <Pause size={23} /> : <Play size={23} />}
-        </button>
-        <span className="screen-meta">
-          {reduced
-            ? "MANUAL PROJECTION"
-            : playing
-              ? "NOW PLAYING"
-              : "THE OPENING PROGRAMME"}{" "}
-          <span>0{index + 1} / 03</span>
-        </span>
-      </div>
-      <div className="film-programme">
-        {films.map((f, i) => (
-          <button
-            key={f.title}
-            className={i === index ? "active" : ""}
-            onClick={() => {
-              setIndex(i);
-              discover("cinema");
-            }}
-          >
-            <span>0{i + 1}</span>
-            <div>
-              <h3>{f.title}</h3>
-              <p>{f.theme}</p>
+          <img key={film.image} src={film.image} alt={film.imageAlt} />
+          <div className="projection-shade" />
+          <div className="film-caption">
+            <div className="film-kicker">
+              <span>
+                {film.type} · {film.year}
+              </span>
+              {film.favorite && <strong>MY FAVORITE SERIES</strong>}
             </div>
-            <Film size={18} />
-          </button>
-        ))}
-      </div>
+            <h3 aria-live="polite">{film.title}</h3>
+            <blockquote>“{film.quote}”</blockquote>
+            <cite>— {film.speaker}</cite>
+          </div>
+          <a
+            className="imdb-score"
+            href={film.imdbUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${film.title} on IMDb, rated ${film.imdbRating} out of 10`}
+          >
+            <b>IMDb</b> {film.imdbRating.toFixed(1)} <span>/ 10</span>
+            <ExternalLink size={13} aria-hidden="true" />
+          </a>
+          <div className="slider-controls">
+            <button
+              onClick={() => selectFilm(index - 1)}
+              aria-label="Previous recommendation"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <span>
+              0{index + 1} / 0{cinemaRecommendations.length}
+            </span>
+            <button
+              onClick={() => selectFilm(index + 1)}
+              aria-label="Next recommendation"
+            >
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        </div>
+        <div className="film-programme" aria-label="Choose a recommendation">
+          {cinemaRecommendations.map((item, itemIndex) => (
+            <button
+              key={item.id}
+              className={itemIndex === index ? "active" : ""}
+              aria-current={itemIndex === index ? "true" : undefined}
+              onClick={() => selectFilm(itemIndex)}
+            >
+              <span>0{itemIndex + 1}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>
+                  {item.type} · IMDb {item.imdbRating.toFixed(1)}
+                </p>
+              </div>
+              <Film size={18} />
+            </button>
+          ))}
+        </div>
+      </section>
+      <section
+        className="cinema-watchlist"
+        aria-labelledby="cinema-watchlist-title"
+      >
+        <div className="cinema-collection-heading">
+          <div>
+            <p className="eyebrow">CURRENTLY WATCHING</p>
+            <h2 id="cinema-watchlist-title">On my watchlist.</h2>
+          </div>
+          <p>Three worlds still unfolding.</p>
+        </div>
+        <div className="watchlist-grid">
+          {cinemaWatchlist.map((item) => (
+            <article className="watchlist-card" key={item.id}>
+              <img src={item.image} alt={item.imageAlt} />
+              <div className="watchlist-shade" />
+              <div className="watchlist-copy">
+                <span>
+                  {item.type} · {item.year}
+                </span>
+                <h3>{item.title}</h3>
+                <a
+                  href={item.imdbUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${item.title} on IMDb, rated ${item.imdbRating} out of 10`}
+                >
+                  <b>IMDb</b> {item.imdbRating.toFixed(1)} / 10
+                  <ExternalLink size={12} aria-hidden="true" />
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
       <p className="data-note cinema-note">
-        Three original visual essays using the garden’s concept imagery.
+        IMDb ratings are a snapshot checked in {imdbRatingCheckedAt}.
       </p>
     </div>
   );

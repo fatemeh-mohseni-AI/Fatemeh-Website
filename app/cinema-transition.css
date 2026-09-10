@@ -80,3 +80,94 @@
   .is-entering-scene .camera-surface { transform: none !important; transition: none; }
   .scene-entry *, .room-cinema .room-content { animation: none !important; transition: none !important; }
 }
+
+/* Fatemeh's recommendations: a calm, editorial carousel over the garden scene. */
+.cinema-collection { margin-top: 34px; }
+.cinema-collection-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 17px; }
+.cinema-collection-heading .eyebrow { margin-bottom: 7px; color: #d0b77e; }
+.cinema-collection-heading h2 { font-family: Georgia, serif; font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 400; color: #f1e5d1; }
+.cinema-collection-heading > p { max-width: 330px; padding-bottom: 4px; font-size: .82rem; line-height: 1.6; text-align: right; color: #d8cebd9c; }
+
+.cinema-screen.recommendation-slider { position: relative; height: clamp(420px, 53vw, 540px); margin: 0; border: 1px solid #d9bd7e3b; border-radius: 6px; background: #101a16; box-shadow: 0 24px 70px #050a077a, inset 0 0 0 7px #10171499; overflow: hidden; touch-action: pan-y; cursor: grab; }
+.cinema-screen.recommendation-slider:active { cursor: grabbing; }
+.cinema-screen.recommendation-slider:focus-visible { outline: 2px solid #d3b576; outline-offset: 4px; }
+.cinema-screen.recommendation-slider > img { width: 100%; height: 100%; object-fit: cover; object-position: center; filter: saturate(.7) brightness(.72) contrast(1.04); animation: cinema-slide-in 700ms cubic-bezier(.2,.7,.25,1) both; }
+.recommendation-slider .projection-shade { background: linear-gradient(90deg, #0b1511ed 0%, #0d1711a8 48%, #0c120e28 76%), linear-gradient(0deg, #09100de0 0%, transparent 54%), radial-gradient(ellipse at 83% 35%, transparent 12%, #0509073b 85%); }
+.recommendation-slider .film-caption { position: absolute; left: 6.5%; top: auto; bottom: 86px; width: min(610px, 65%); max-width: none; }
+.film-kicker { display: flex; align-items: center; gap: 11px; margin-bottom: 15px; font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: #e7dac2b8; }
+.film-kicker strong { padding: 6px 9px 5px; border: 1px solid #d8b96f70; border-radius: 999px; background: #b8994d18; font-size: .62rem; font-weight: 600; letter-spacing: .13em; color: #eed49a; }
+.recommendation-slider .film-caption h3 { margin: 0; font-family: Georgia, serif; font-size: clamp(2.35rem, 5.1vw, 4.8rem); font-weight: 400; line-height: .98; color: #f5ead8; text-wrap: balance; }
+.recommendation-slider blockquote { margin: 22px 0 5px; font-family: Georgia, serif; font-size: clamp(1rem, 1.8vw, 1.3rem); font-style: italic; line-height: 1.55; color: #eee1cca8; }
+.recommendation-slider cite { font-size: .72rem; font-style: normal; letter-spacing: .09em; color: #d6c8b2a3; }
+
+.imdb-score { position: absolute; top: 28px; right: 30px; display: inline-flex; align-items: center; gap: 5px; min-height: 40px; padding: 8px 11px; border: 1px solid #e1c77f4d; border-radius: 999px; background: #0a110d9c; backdrop-filter: blur(8px); font-size: .75rem; color: #eee2ca; transition: border-color 200ms ease, background 200ms ease, transform 200ms ease; }
+.imdb-score b, .watchlist-copy a b { color: #f2cf62; }
+.imdb-score span { color: #d7cbb7a1; }
+.imdb-score:is(:hover, :focus-visible) { border-color: #e1c77f9c; background: #111b15dc; transform: translateY(-1px); }
+.slider-controls { position: absolute; right: 28px; bottom: 26px; display: flex; align-items: center; gap: 13px; color: #e6dac4c4; }
+.slider-controls button { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid #d8c49b56; border-radius: 50%; background: #0b1511a8; color: #eadfc9; backdrop-filter: blur(7px); transition: border-color 180ms ease, background 180ms ease, transform 180ms ease; }
+.slider-controls button:is(:hover, :focus-visible) { border-color: #dfc68d; background: #253b2fd4; transform: scale(1.04); }
+.slider-controls > span { min-width: 58px; font-size: .66rem; letter-spacing: .15em; text-align: center; }
+
+.room-cinema .film-programme { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+.room-cinema .film-programme button { min-width: 0; min-height: 80px; gap: 9px; padding: 14px 2px 4px; border-top-color: #cfbf9b29; }
+.room-cinema .film-programme button.active { border-color: #d3b46c; color: #f4e2bf; }
+.room-cinema .film-programme button > span { flex: 0 0 auto; font-size: .62rem; }
+.room-cinema .film-programme button > div { min-width: 0; }
+.room-cinema .film-programme h3 { overflow: hidden; font-size: .9rem; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.room-cinema .film-programme p { font-size: .62rem; letter-spacing: .03em; white-space: nowrap; }
+.room-cinema .film-programme svg { display: none; }
+.room-cinema .film-programme button:focus-visible { outline: 1px solid #d3b576; outline-offset: 5px; }
+
+.cinema-watchlist { margin-top: 72px; }
+.watchlist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+.watchlist-card { position: relative; min-height: 235px; border: 1px solid #d6bd8430; border-radius: 6px; background: #101a16; box-shadow: 0 15px 40px #060b083b; overflow: hidden; }
+.watchlist-card img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.62) brightness(.67); transition: transform 500ms cubic-bezier(.2,.7,.25,1), filter 300ms ease; }
+.watchlist-card:hover img { transform: scale(1.035); filter: saturate(.75) brightness(.72); }
+.watchlist-shade { position: absolute; inset: 0; background: linear-gradient(0deg, #09100df2 0%, #0a120b80 55%, transparent 90%); }
+.watchlist-copy { position: absolute; right: 20px; bottom: 18px; left: 20px; }
+.watchlist-copy > span { font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: #ded2bda1; }
+.watchlist-copy h3 { margin: 6px 0 12px; font-family: Georgia, serif; font-size: 1.75rem; font-weight: 400; color: #f1e3cc; }
+.watchlist-copy a { display: inline-flex; align-items: center; gap: 5px; min-height: 34px; font-size: .7rem; color: #ddd0ba; }
+.watchlist-copy a:is(:hover, :focus-visible) { color: #fff0cf; }
+.cinema-note { margin-top: 26px; color: #cfc1aaa0; }
+
+@keyframes cinema-slide-in {
+  from { opacity: .55; transform: scale(1.025); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 900px) {
+  .room-cinema .film-programme { grid-template-columns: repeat(3, 1fr); }
+  .cinema-screen.recommendation-slider { height: 460px; }
+  .recommendation-slider .film-caption { width: 72%; }
+}
+
+@media (max-width: 600px) {
+  .cinema-collection { margin-top: 27px; }
+  .cinema-collection-heading { display: block; margin-bottom: 14px; }
+  .cinema-collection-heading > p { margin-top: 7px; padding: 0; text-align: left; }
+  .cinema-screen.recommendation-slider { height: 470px; border-width: 1px; }
+  .cinema-screen.recommendation-slider > img { object-position: 57% center; }
+  .recommendation-slider .projection-shade { background: linear-gradient(0deg, #09100df5 0%, #0b1511a8 58%, #0c120e24 88%); }
+  .recommendation-slider .film-caption { left: 7%; right: 7%; bottom: 91px; width: auto; max-width: none; }
+  .film-kicker { flex-wrap: wrap; margin-bottom: 10px; }
+  .recommendation-slider .film-caption h3 { font-size: clamp(2.1rem, 12vw, 3.55rem); }
+  .recommendation-slider blockquote { margin-top: 15px; font-size: 1rem; }
+  .imdb-score { top: 18px; right: 18px; }
+  .slider-controls { right: 18px; bottom: 20px; }
+  .room-cinema .film-programme { display: flex; gap: 11px; margin-right: -18px; padding-right: 18px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+  .room-cinema .film-programme::-webkit-scrollbar { display: none; }
+  .room-cinema .film-programme button { flex: 0 0 155px; min-height: 72px; scroll-snap-align: start; }
+  .room-cinema .film-programme h3 { font-size: .9rem; }
+  .cinema-watchlist { margin-top: 56px; }
+  .watchlist-grid { grid-template-columns: 1fr; }
+  .watchlist-card { min-height: 245px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinema-screen.recommendation-slider > img,
+  .watchlist-card img,
+  .slider-controls button,
+  .imdb-score { animation: none; transition: none; }
+}

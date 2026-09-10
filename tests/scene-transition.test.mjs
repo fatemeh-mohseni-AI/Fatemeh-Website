@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test, { after } from "node:test";
-import { readFile } from "node:fs/promises";
 import { createServer } from "vite";
 import { fileURLToPath } from "node:url";
 
@@ -12,12 +11,9 @@ const { cinemaTransition, pickSceneImage, runSceneEntry, sceneTransitions } =
 const fastConfig = { ...cinemaTransition,
   timing: { focus: 1, approach: 1, environment: 1, settle: 1, reveal: 1 } };
 
-test("only Cinema opts in with the five user-provided local image paths", async () => {
+test("only Cinema opts in with the five user-provided local image paths", () => {
   assert.deepEqual(Object.keys(sceneTransitions), ["cinema"]);
   assert.deepEqual(cinemaTransition.images, [1, 2, 3, 4, 5].map((n) => `/images/cinema/${n}.webp`));
-  const content = await readFile(new URL("../components/garden/rooms.tsx", import.meta.url), "utf8");
-  for (const title of ["The art of noticing", "A different kind of window", "Rooms we return to"])
-    assert.ok(content.includes(title));
 });
 test("image selection avoids the immediately previous path", () => {
   assert.equal(pickSceneImage(cinemaTransition.images, null, () => 0), cinemaTransition.images[0]);

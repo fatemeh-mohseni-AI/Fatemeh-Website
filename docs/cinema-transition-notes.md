@@ -5,7 +5,7 @@
 - React 19 + TypeScript, Vite 8 / Vinext; app entry is `app/page.tsx` → `Garden`.
 - Room selection is React state synchronized with URL hashes, not separate route pages.
 - Default courtyard: local photograph with CSS pan/zoom (pseudo-3D). Optional walking courtyard: imperative Three.js. No Framer Motion or GSAP dependency was added.
-- Existing Cinema programme, three visual essays, playback, discovery stamps and bottom navigation remain intact. Travel and the other rooms were not redesigned.
+- Existing Cinema room, discovery stamps and bottom navigation remain intact. Its former concept programme is now a data-driven recommendation carousel and current watchlist. Travel and the other rooms were not redesigned.
 
 ## Entry flow
 
@@ -28,6 +28,8 @@ During entry, the underlying shell is `inert`; focus moves to a visible Back but
 - `lib/garden/scene-transitions.ts`: typed destination config, phase ordering and abortable timing runner.
 - `components/garden/use-scene-transition.ts`: single-flight lock, preload/decode, cancellation, phase state, completion and failure handling.
 - `components/garden/scene-transition.tsx`: reusable environment and transition overlay; accessible status and cancellation.
+- `lib/garden/cinema-collection.ts`: typed recommendation and watchlist content, including IMDb snapshot values.
+- `public/images/cinema-titles/`: local title stills and their temporary source notes.
 - `components/garden/garden.tsx`: navigation interception and late room/history commit; retains the existing shell.
 - `components/garden/spatial-garden.tsx`: optional 3D camera cue without recreating the WebGL scene.
 - `app/cinema-transition.css`: scoped imagery, overlay, motion, responsive and reduced-motion styling.
