@@ -14,8 +14,9 @@ const vite = await createServer({
 after(() => vite.close());
 
 const { books } = await vite.ssrLoadModule("/lib/garden/books.ts");
+const { sheetPoint, tableAnchor } = await vite.ssrLoadModule('/lib/garden/book-geometry.ts');
 
-test("the initial shelf contains the requested six discoveries", () => {
+test("the shelf contains nine distinct book discoveries", () => {
   assert.deepEqual(
     books.map(({ title }) => title),
     [
@@ -25,6 +26,9 @@ test("the initial shelf contains the requested six discoveries", () => {
       "Man’s Search for Meaning",
       "Norwegian Wood",
       "The Alchemist",
+      "The Prince and the Pauper",
+      "The Master and Margarita",
+      "One Hundred Years of Solitude",
     ],
   );
   assert.equal(books[0].author, "Toshikazu Kawaguchi");
@@ -35,14 +39,31 @@ test("book records are unique and contain literary content", () => {
   for (const book of books) {
     assert.ok(book.description.length > 30);
     assert.ok(book.personalNote.length > 30);
-    assert.ok(book.quotes.length > 0);
+    assert.ok(Array.isArray(book.quotes));
     assert.ok(book.quotes.every((quote) => quote.length > 0));
   }
 });
 
-test("every placeholder cover is a local available asset", async () => {
+test("every published cover is a dedicated local asset", async () => {
   for (const book of books) {
-    assert.match(book.coverImage, /^\/images\/[a-z0-9/.-]+\.(webp|jpg|png)$/);
+    assert.equal(book.coverImage, `/images/books/${book.id}.jpg`);
     await access(`${root}/public${book.coverImage}`);
+  }
+});
+
+test('mesh sheet pins the spine, stays flat at endpoints and bends mid-turn', () => {
+  for (const p of [0, .2, .5, .8, 1]) assert.deepEqual(sheetPoint(0,p), {x:0,z:0});
+  assert.ok(Math.abs(sheetPoint(1,0).x-3.2)<1e-10);
+  assert.ok(Math.abs(sheetPoint(1,1).x+3.2)<1e-10);
+  assert.ok(Math.abs(sheetPoint(1,1).z)<1e-10);
+  const edge=sheetPoint(1,.5), middle=sheetPoint(.25,.5);
+  assert.ok(edge.z>2);
+  assert.ok(Math.abs(edge.x/edge.z-middle.x/middle.z)>.01, 'sheet is curved, not one rigid plane');
+});
+test('book projects onto the table through the room cover crop', () => {
+  assert.equal(tableAnchor(1672,941).x,1672*.515);
+  assert.equal(tableAnchor(1672,941).y,941*.584);
+  for (const [w,h] of [[1920,1080],[1280,720],[800,1000],[390,220]]) {
+    const a=tableAnchor(w,h); assert.ok(a.x>0&&a.x<w&&a.y>0&&a.y<h);
   }
 });

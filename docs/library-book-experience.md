@@ -1,42 +1,27 @@
 # Library book experience
 
-## What changed
+The existing Library room, essays and garden navigation remain unchanged. No new route or dependency was added.
 
-The existing Library room, fixed Persian reading-room background, essay list, article dialogs and shared garden navigation remain in place. `BookScene` adds one physical-book interaction over that room without creating a new route.
+## Scene and fixes
+- `BookScene` uses Radix modal primitives for focus trapping, Escape and focus restoration. A fullscreen grid keeps the book centered and controls on screen. It deliberately does not use the shared DialogContent's individual translate utilities: combining those with the old CSS translate caused the upper-left cropping.
+- The closed book is anchored to a tabletop point in the 1672×941 room photograph through the same cover-crop calculation as the background. It has contact shadows and a light-only breathing cue, not a hovering translation. On mobile the room vignette stays in normal flow.
+- Opening darkens/blurs the room, moves attention from the table to the centered book and opens the boards. Animation begins after the graphics renderer is ready. Closing/Escape immediately returns to the Library.
+- Reduced-motion users skip the travel/open/flip animation. A readable HTML view exposes every active record to assistive technology. It is also the fallback for unavailable WebGL or a failed graphics chunk.
 
-The closed book sits over the table area on desktop and becomes an in-flow discovery before the essay list on small screens. Its low-frequency lift, changing shadow and restrained halo make it discoverable without presenting it as a conventional app button.
+## Actual mesh page turning
+`components/garden/book-mesh.tsx` lazy-loads the existing Three.js dependency. Covers, page blocks and spine have physical thickness. A 48×12 segmented sheet bends by integrating its tangent along the width (`lib/garden/book-geometry.ts`); vertex positions and normals change with drag progress. Separate front/back textures, directional lighting and soft shadows reveal curvature. This is a deformable WebGL mesh, not a rigid CSS plane.
 
-## Opening sequence
+Drag either lower outer corner. Passing 25% of the drag distance completes the turn; a short drag, pointer cancellation or lost capture returns the sheet. Buttons and arrow keys provide equivalents; bounds and an interaction lock prevent overlapping turns. Every completed turn advances exactly one book discovery, not another page of the same novel.
 
-The viewer reuses the project’s accessible Dialog primitive for focus management and modal semantics. Its visual sequence is driven by a small local state machine:
+The scene renders only on state, resize or texture updates, caps pixel ratio and disposes GPU resources when closed. Paper deformation is an artistic curve, not a full cloth-physics simulation.
 
-1. `focus`: the room darkens and softens while the book moves from the table toward the viewport center.
-2. `opening`: the two covers/pages rotate away from the spine with CSS 3D transforms.
-3. `open`: the spread becomes interactive.
-4. `closing`: the pages close and the book returns toward the table before the dialog unmounts.
+## Data and assets
+`lib/garden/books.ts` contains nine records, including The Prince and the Pauper, The Master and Margarita and One Hundred Years of Solitude. First is Before the Coffee Gets Cold. Each spread has literary text on the left and the actual published cover on the right.
 
-Visitors who prefer reduced motion go directly to the open state and page changes complete without animated travel.
+Covers live at `public/images/books/<id>.jpg`; they are English-language editions, locally served without runtime hotlinks. See `docs/book-cover-sources.md` for provenance and rights caveats. Add a record with id, title, author, coverImage, coverAlt, description, quotes array (can be empty), personalNote, category and theme. Notes are labeled drafts, not claims about the owner's personal experience. New books omit quotations pending selection from a verified edition. Existing seed quotations should also be editorially checked against chosen translations before public publication.
 
-## Page turning
+## Validation and remaining QA
+TypeScript, production build and data/geometry regression tests are used. The tests cover nine distinct records, local assets, spine anchoring, flat endpoints, genuine intermediate curvature and table projection. A desktop browser screenshot confirmed the tabletop anchoring. This environment blocked the dynamically loaded graphics module, so full interactive WebGL, Firefox and touch-device verification remain required; do not treat a successful build as visual verification.
 
-Each spread represents one book. Dragging the lower-right page corner toward the left previews the next discovery; dragging the lower-left corner toward the right previews the previous one. The turning sheet follows pointer distance, rotates around the spine, and settles forward after the drag passes its completion threshold. Previous/Next buttons and Left/Right keyboard keys provide equivalent access.
-
-CSS perspective, preserve-3d, backface visibility, separate boards, a layered page block, spine shading and moving sheet shadows create the physical depth. No WebGL renderer or additional dependency is required.
-
-## Data and adding books
-
-Book data is defined in `lib/garden/books.ts`. Add a new object to the exported `books` array with:
-
-- a unique `id`, `title` and `author`;
-- a local `coverImage` path, useful alternative text and optional focal position;
-- a short `description`, selected `quotes` and `personalNote`;
-- an optional `category` and one of the supported visual themes.
-
-The current images intentionally reuse existing garden assets as placeholders. Put replacement covers under a dedicated local image folder, update `coverImage`, and keep their aspect ratios large enough for the visual page’s portrait crop. This data boundary can later be replaced by an admin/CMS response without changing the viewer.
-
-## Current limitations and future work
-
-- Covers are atmospheric placeholders rather than final licensed cover artwork.
-- Page curvature is simulated with planar CSS 3D surfaces; a future WebGL version could add mesh deformation and physically based lighting.
-- Personal notes are static seed content and are not editable yet.
-- Future additions can include an admin panel, real cover uploads, reading dates, favorite passages, progress, richer paper sound/shadow cues and optional restrained sound design.
+## Future work
+Admin/CMS editing, owner-authored notes, reading dates, verified favorite passages, permission-cleared cover uploads, improved material textures, higher-order page physics and optional quiet paper audio. Keep sound opt-in and preserve reduced motion and the HTML reading view.
