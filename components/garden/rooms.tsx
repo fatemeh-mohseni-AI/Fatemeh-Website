@@ -46,6 +46,7 @@ import {
 import { useData } from "./use-data";
 import { TravelDetail, TravelPlaceButton } from "./travel-place-ui";
 import { BaghFerdowsStory } from "./scene-transition";
+import { BookScene } from "./book-scene";
 const Globe = lazy(() => import("./globe"));
 type Props = {
   id: RoomId;
@@ -93,7 +94,7 @@ export default function Room(props: Props) {
   }
 }
 
-function Library({ discover }: Props) {
+function Library({ discover, reduced }: Props) {
   const { data, error, retry } = useData("/data/writings.json", writingSchema);
   const [article, setArticle] = useState<Writing | null>(null);
   return (
@@ -116,6 +117,10 @@ function Library({ discover }: Props) {
           <br />
           and ideas still finding their shape.
         </p>
+        <BookScene
+          reduced={reduced}
+          onDiscover={() => discover("library")}
+        />
         <div className="writing-list">
           {!data ? (
             <CollectionStatus error={error} retry={retry} />
