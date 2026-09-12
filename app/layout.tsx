@@ -4,6 +4,7 @@ import "./globals.css";
 import "./cinema-transition.css";
 import "./library-book.css";
 import "./courtyard-travel.css";
+import "./memory-gallery.css";
 import "./anonymous-letters.css";
 import "./anonymous-letters-layer.css";
 
