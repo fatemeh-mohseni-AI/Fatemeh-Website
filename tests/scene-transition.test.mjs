@@ -4,15 +4,18 @@ import { createServer } from "vite";
 import { fileURLToPath } from "node:url";
 
 const vite = await createServer({ appType: "custom", configFile: false,
-  root: fileURLToPath(new URL("..", import.meta.url)), server: { middlewareMode: true } });
+  root: fileURLToPath(new URL("..", import.meta.url)), server: { middlewareMode: true, hmr: false } });
 after(() => vite.close());
-const { cinemaTransition, pickSceneImage, runSceneEntry, sceneTransitions } =
+const { cinemaTransition, galleryTransition, pickSceneImage, runSceneEntry, sceneTransitions } =
   await vite.ssrLoadModule("/lib/garden/scene-transitions.ts");
 const fastConfig = { ...cinemaTransition,
   timing: { focus: 1, approach: 1, environment: 1, settle: 1, reveal: 1 } };
 
-test("only Cinema opts in with the five user-provided local image paths", () => {
-  assert.deepEqual(Object.keys(sceneTransitions), ["cinema"]);
+test("Cinema keeps its five images and Gallery opts into a short doorway transition", () => {
+  assert.deepEqual(Object.keys(sceneTransitions), ["cinema", "gallery"]);
+  assert.equal(galleryTransition.images[0], "/images/door.webp");
+  const duration = Object.values(galleryTransition.timing).reduce((a, b) => a + b, 0);
+  assert.ok(duration >= 1000 && duration <= 2000);
   assert.deepEqual(cinemaTransition.images, [1, 2, 3, 4, 5].map((n) => `/images/cinema/${n}.webp`));
 });
 test("image selection avoids the immediately previous path", () => {

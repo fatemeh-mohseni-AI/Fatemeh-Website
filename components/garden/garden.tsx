@@ -110,14 +110,15 @@ export default function Garden() {
     }
   }, [stamps, journalReady]);
   const commitRoom = useCallback(
-    (id: RoomId) => {
+    (id: RoomId, history: "push" | "none" = "push") => {
       setRoom(id);
       setEntered(true);
       setModal(null);
       setCamera({ x: 0, y: 0, z: 1 });
       setSpatial(false);
       if (id === "courtyard") discover("garden");
-      window.history.replaceState(null, "", `#${id}`);
+      if (history === "push" && window.location.hash !== `#${id}`)
+        window.history.pushState(null, "", `#${id}`);
       if (id === "courtyard")
         requestAnimationFrame(() => mainHeading.current?.focus());
     },
@@ -181,14 +182,21 @@ export default function Garden() {
     const hash = window.location.hash.slice(1);
     if (rooms.some((r) => r.id === hash)) {
       if (hash === "cinema") entry.selectImage(cinemaTransition);
-      commitRoom(hash as RoomId);
+      commitRoom(hash as RoomId, "none");
     }
     const onHash = () => {
       const value = window.location.hash.slice(1);
       if (rooms.some((r) => r.id === value)) {
         entry.cancel();
         if (value === "cinema") entry.selectImage(cinemaTransition);
-        commitRoom(value as RoomId);
+        commitRoom(value as RoomId, "none");
+      } else if (!value) {
+        entry.cancel();
+        setEntered(false);
+        setRoom("courtyard");
+        target.current = 0;
+        progressRef.current = 0;
+        setProgress(0);
       }
     };
     window.addEventListener("hashchange", onHash);
@@ -381,6 +389,7 @@ export default function Garden() {
     <main
       className={`garden-app ${entered ? "has-entered" : "at-gate"} ${reduced ? "reduced-motion" : ""} room-${room} ${entry.request ? "is-entering-scene" : ""}`}
       data-entry-phase={entry.request ? entry.phase : undefined}
+      data-entry-destination={entry.request?.config.destination}
       data-entry-reduced={entry.request?.reduced || undefined}
       data-entry-spatial={entry.request && spatial ? true : undefined}
       style={entry.request ? {
@@ -622,6 +631,7 @@ export default function Garden() {
           >
             <Room
               id={room}
+              onRoom={goTo}
               reduced={reduced}
               discover={discover}
               notify={notify}

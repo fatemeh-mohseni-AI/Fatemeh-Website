@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { memoriesSchema } from "./memories";
 export const locationSchema = z.object({
   id: z.string().min(1).max(100),
   name: z.string().min(1).max(120),
@@ -43,16 +44,7 @@ export const writingSchema = z.array(
   }),
 );
 export type Writing = z.infer<typeof writingSchema>[number];
-export const gallerySchema = z.array(
-  z.object({
-    id: z.string(),
-    title: z.string(),
-    caption: z.string(),
-    src: z.string().startsWith("/images/"),
-    alt: z.string(),
-    credit: z.string(),
-  }),
-);
+export const gallerySchema = memoriesSchema;
 export type GalleryItem = z.infer<typeof gallerySchema>[number];
 export function earthLink(p: Location) {
   try {

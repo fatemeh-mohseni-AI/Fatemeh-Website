@@ -3,23 +3,24 @@ import { useEffect, useState } from "react";
 import type { z } from "zod";
 export function useData<S extends z.ZodTypeAny>(path: string, schema: S) {
   type T = z.output<S>;
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
+  const [result, setResult] = useState<{ path: string; attempt: number; data: T | null; error: string } | null>(null);
   useEffect(() => {
     const controller = new AbortController();
-    setError("");
     fetch(path, { signal: controller.signal })
-      .then(async (r) => {
-        if (!r.ok) throw new Error("Unavailable");
-        return schema.parse(await r.json());
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unavailable");
+        return schema.parse(await response.json());
       })
-      .then(setData)
-      .catch((e) => {
-        if (e.name !== "AbortError")
-          setError("This collection could not be loaded. Please try again.");
+      .then((data) => {
+        if (!controller.signal.aborted) setResult({ path, attempt, data, error: "" });
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted && !(error instanceof DOMException && error.name === "AbortError"))
+          setResult({ path, attempt, data: null, error: "This collection could not be loaded. Please try again." });
       });
     return () => controller.abort();
   }, [path, schema, attempt]);
-  return { data, error, retry: () => setAttempt((v) => v + 1) };
+  const current = result?.path === path && result.attempt === attempt ? result : null;
+  return { data: current?.data ?? null, error: current?.error ?? "", retry: () => setAttempt((value) => value + 1) };
 }

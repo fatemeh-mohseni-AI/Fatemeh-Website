@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { courtyardCover, isTehranNight } from "@/lib/garden/courtyard";
+import { courtyardCover } from "@/lib/garden/courtyard";
+import { useTehranLight } from "./use-tehran-light";
 
 export function CourtyardArtwork({
   enabled,
@@ -13,20 +14,10 @@ export function CourtyardArtwork({
   onDiscover: () => void;
 }) {
   const frame = useRef<HTMLDivElement>(null);
-  const [night, setNight] = useState(false);
+  const night = useTehranLight() === "night";
   const [nightLoaded, setNightLoaded] = useState(false);
   const [cover, setCover] = useState<ReturnType<typeof courtyardCover> | null>(null);
 
-  useEffect(() => {
-    const update = () => setNight(isTehranNight());
-    update();
-    const timer = window.setInterval(update, 15_000);
-    document.addEventListener("visibilitychange", update);
-    return () => {
-      window.clearInterval(timer);
-      document.removeEventListener("visibilitychange", update);
-    };
-  }, []);
 
   useEffect(() => {
     const element = frame.current;
