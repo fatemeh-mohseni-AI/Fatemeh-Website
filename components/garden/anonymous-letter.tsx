@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 
 const MAX_MESSAGE_LENGTH = 1500;
+const REQUEST_TIMEOUT_MS = 12_000;
 
 type SubmitState = "idle" | "sending" | "folding" | "sent" | "error";
 
@@ -37,15 +38,25 @@ export function AnonymousLetterDialog({
   const [error, setError] = useState("");
   const honeypotRef = useRef<HTMLInputElement>(null);
   const finishTimerRef = useRef<number | null>(null);
+  const requestTimerRef = useRef<number | null>(null);
+  const requestControllerRef = useRef<AbortController | null>(null);
+  const wasOpenRef = useRef(open);
 
   useEffect(() => {
     return () => {
       if (finishTimerRef.current !== null) window.clearTimeout(finishTimerRef.current);
+      if (requestTimerRef.current !== null) window.clearTimeout(requestTimerRef.current);
+      requestControllerRef.current?.abort();
     };
   }, []);
 
   useEffect(() => {
-    if (open && state === "sent") setState("idle");
+    const reopened = open && !wasOpenRef.current;
+    if (reopened && state === "sent") {
+      setState("idle");
+      setError("");
+    }
+    wasOpenRef.current = open;
   }, [open, state]);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -56,11 +67,17 @@ export function AnonymousLetterDialog({
     setState("sending");
     setError("");
 
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
+    requestTimerRef.current = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
     try {
       const sourceRoute = `${window.location.pathname}${window.location.hash || "#entrance"}`.slice(0, 120);
       const response = await fetch("/api/anonymous-letter", {
         method: "POST",
         headers: { "content-type": "application/json" },
+        cache: "no-store",
+        signal: controller.signal,
         body: JSON.stringify({
           body,
           sourceRoute,
@@ -68,8 +85,11 @@ export function AnonymousLetterDialog({
         }),
       });
 
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as
+        | { ok?: boolean; error?: string; code?: string }
+        | null;
+
+      if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || "پیام فرستاده نشد. دوباره امتحان کن.");
       }
 
@@ -80,7 +100,17 @@ export function AnonymousLetterDialog({
       }, 900);
     } catch (cause) {
       setState("error");
-      setError(cause instanceof Error ? cause.message : "پیام فرستاده نشد. دوباره امتحان کن.");
+      if (cause instanceof DOMException && cause.name === "AbortError") {
+        setError("پاسخی از سرور نرسید. متن یادداشتت حفظ شده؛ دوباره امتحان کن.");
+      } else {
+        setError(cause instanceof Error ? cause.message : "پیام فرستاده نشد. دوباره امتحان کن.");
+      }
+    } finally {
+      if (requestTimerRef.current !== null) {
+        window.clearTimeout(requestTimerRef.current);
+        requestTimerRef.current = null;
+      }
+      requestControllerRef.current = null;
     }
   };
 
@@ -88,12 +118,20 @@ export function AnonymousLetterDialog({
   const remaining = MAX_MESSAGE_LENGTH - message.length;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen && busy) return;
+        onOpenChange(nextOpen);
+      }}
+    >
       <DialogContent className="anonymous-letter-dialog" showCloseButton={!busy}>
         <div className="letter-stage" dir="rtl">
           {state === "sent" ? (
             <div className="letter-delivered" role="status">
-              <span className="delivered-mark"><InkAndQuillIcon /></span>
+              <span className="delivered-mark">
+                <InkAndQuillIcon />
+              </span>
               <p>رسید به باغ.</p>
               <span>ممنون که چیزی از خودت اینجا جا گذاشتی.</span>
             </div>
@@ -105,7 +143,9 @@ export function AnonymousLetterDialog({
                 نامت لازم نیست. هر چیزی که دوست داری برایم بنویس.
               </DialogDescription>
 
-              <label className="sr-only" htmlFor="anonymous-letter-message">متن یادداشت</label>
+              <label className="sr-only" htmlFor="anonymous-letter-message">
+                متن یادداشت
+              </label>
               <textarea
                 id="anonymous-letter-message"
                 value={message}
@@ -134,7 +174,9 @@ export function AnonymousLetterDialog({
               />
 
               <div className="letter-meta">
-                <span className={remaining < 100 ? "near-limit" : ""}>{message.length} / {MAX_MESSAGE_LENGTH}</span>
+                <span className={remaining < 100 ? "near-limit" : ""} dir="ltr">
+                  {message.length} / {MAX_MESSAGE_LENGTH}
+                </span>
                 <span>برای جلوگیری از اسپم، حداقل اطلاعات فنی به‌صورت محدود پردازش می‌شود.</span>
               </div>
 
@@ -147,7 +189,9 @@ export function AnonymousLetterDialog({
                   {state === "sending" ? "در حال فرستادن…" : state === "folding" ? "راهی شد…" : "بفرستش"}
                   <Send size={16} strokeWidth={1.5} />
                 </button>
-                <p className={`letter-error ${error ? "visible" : ""}`} role="alert">{error}</p>
+                <p className={`letter-error ${error ? "visible" : ""}`} role="alert">
+                  {error}
+                </p>
               </div>
             </form>
           )}
