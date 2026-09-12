@@ -1,0 +1,5 @@
+body:has(.anonymous-letter-dialog) .garden-global-nav {
+  z-index: 40;
+  opacity: 0.28;
+  pointer-events: none;
+}
