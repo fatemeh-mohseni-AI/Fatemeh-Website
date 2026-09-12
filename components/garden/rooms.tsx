@@ -10,10 +10,6 @@ import {
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
-  Check,
-  ChevronLeft,
-  ChevronRight,
   ExternalLink,
   FileUp,
   Film,
@@ -35,11 +31,9 @@ import {
 } from "@/lib/garden/cinema-collection";
 import { type RoomId } from "@/lib/garden/content";
 import {
-  gallerySchema,
   locationsSchema,
   parseKml,
   writingSchema,
-  type GalleryItem,
   type Location,
   type Writing,
 } from "@/lib/garden/data";
@@ -47,6 +41,7 @@ import { useData } from "./use-data";
 import { TravelDetail, TravelPlaceButton } from "./travel-place-ui";
 import { BaghFerdowsStory } from "./scene-transition";
 import { BookScene } from "./book-scene";
+import { MemoryGallery } from "./memory-gallery/memory-gallery";
 const Globe = lazy(() => import("./globe"));
 type Props = {
   id: RoomId;
@@ -54,6 +49,7 @@ type Props = {
   discover: (id: string) => void;
   notify: (message: string) => void;
   deferFocus?: boolean;
+  onRoom: (id: RoomId) => void;
 };
 function CollectionStatus({
   error,
@@ -84,7 +80,7 @@ export default function Room(props: Props) {
     case "travel":
       return <Travel {...props} />;
     case "gallery":
-      return <Gallery {...props} />;
+      return <MemoryGallery {...props} />;
     case "cinema":
       return <Cinema {...props} />;
     case "lab":
@@ -352,100 +348,6 @@ function Travel({ reduced, discover, notify }: Props) {
   );
 }
 
-function Gallery({ discover }: Props) {
-  const { data, error, retry } = useData("/data/gallery.json", gallerySchema);
-  const [selected, setSelected] = useState<number | null>(null);
-  const item = selected !== null ? data?.[selected] : null;
-  return (
-    <div className="gallery-room">
-      <div className="section-title">
-        <p className="eyebrow">04 / THE GALLERY</p>
-        <h1 tabIndex={-1}>
-          Learning <em>to look.</em>
-        </h1>
-        <p>Fragments of light. A feeling worth keeping.</p>
-      </div>
-      <div className="gallery-wall">
-        {!data ? (
-          <CollectionStatus error={error} retry={retry} />
-        ) : (
-          data.map((image, i) => (
-            <button
-              key={image.id}
-              className={`gallery-frame frame-${i}`}
-              onClick={() => {
-                setSelected(i);
-                discover("gallery");
-              }}
-            >
-              <span className="picture-mat">
-                <img src={image.src} alt={image.alt} loading="lazy" />
-              </span>
-              <span className="picture-label">
-                <span>0{i + 1}</span>
-                <span>
-                  <strong>{image.title}</strong>
-                  <span>{image.credit}</span>
-                </span>
-                <span className="frame-open">↗</span>
-              </span>
-            </button>
-          ))
-        )}
-      </div>
-      <div className="gallery-footnote">
-        <span lang="fa">تماشا</span>
-        <p>
-          Architectural studies for this world.
-          <br />
-          An opening collection of imagined spaces.
-        </p>
-      </div>
-      <Dialog
-        open={selected !== null}
-        onOpenChange={(open) => {
-          if (!open) setSelected(null);
-        }}
-      >
-        <DialogContent className="garden-dialog gallery-lightbox">
-          <DialogTitle>{item?.title}</DialogTitle>
-          <DialogDescription>{item?.caption}</DialogDescription>
-          {item && <img src={item.src} alt={item.alt} />}
-          <div className="lightbox-controls">
-            <span>{item?.credit}</span>
-            <div>
-              <button
-                aria-label="Previous image"
-                onClick={() =>
-                  setSelected((i) =>
-                    i !== null && data
-                      ? (i - 1 + data.length) % data.length
-                      : i,
-                  )
-                }
-              >
-                <ChevronLeft size={21} />
-              </button>
-              <span>
-                {selected !== null ? selected + 1 : 0} / {data?.length}
-              </span>
-              <button
-                aria-label="Next image"
-                onClick={() =>
-                  setSelected((i) =>
-                    i !== null && data ? (i + 1) % data.length : i,
-                  )
-                }
-              >
-                <ChevronRight size={21} />
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
 function Cinema({ discover }: Props) {
   const [index, setIndex] = useState(0);
   const swipeStartX = useRef<number | null>(null);

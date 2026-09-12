@@ -3,6 +3,7 @@ import "./globals.css";
 import "./cinema-transition.css";
 import "./library-book.css";
 import "./courtyard-travel.css";
+import "./memory-gallery.css";
 
 export const metadata: Metadata = {
   title: "Fatemeh Mohseni — A Little World of My Own",

@@ -1,5 +1,249 @@
 [
-  { "id": "courtyard", "title": "A quiet afternoon", "caption": "Light, water, and a little room to breathe.", "src": "/images/courtyard.webp", "alt": "Persian courtyard with a turquoise pool, warm plaster arches and trees", "credit": "Architectural concept · AI-generated" },
-  { "id": "orosi", "title": "Through colored glass", "caption": "A study in wood, geometry, and sunlight.", "src": "/images/door.webp", "alt": "Carved walnut Orosi doors with colorful geometric glass", "credit": "Architectural concept · AI-generated" },
-  { "id": "library", "title": "Somewhere to linger", "caption": "An imagined reading room, held in afternoon light.", "src": "/images/library.webp", "alt": "Warm Persian reading room with shelves and an Orosi window", "credit": "Architectural concept · AI-generated" }
+  {
+    "id": "afternoon",
+    "src": "/images/courtyard.webp",
+    "title": "A quiet afternoon",
+    "location": "Tehran",
+    "year": "2026",
+    "category": "Moments",
+    "mood": "Quiet",
+    "tags": [
+      "light",
+      "home"
+    ],
+    "connections": [
+      "after-dark",
+      "orosi"
+    ],
+    "featured": true,
+    "caption": "Light, water, and a little room to breathe.",
+    "memory": "An imagined courtyard, waiting for the everyday moments that will one day fill this house.",
+    "alt": "A turquoise reflecting pool beneath Persian plaster arches and orange trees",
+    "credit": "Architectural study · AI-generated",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "stockholm-water",
+    "src": "/images/travel/stockholm-3.webp",
+    "title": "Where the city meets the water",
+    "location": "Stockholm",
+    "year": "2015",
+    "category": "Places",
+    "mood": "Quiet",
+    "tags": [
+      "water",
+      "evening"
+    ],
+    "connections": [
+      "stockholm-colour",
+      "afternoon"
+    ],
+    "caption": "A northern evening, held between an island and its reflection.",
+    "onward": {
+      "room": "travel",
+      "label": "Follow this memory into the Observatory"
+    },
+    "credit": "Richardmaackphotography · CC BY 4.0 · resized to WebP",
+    "source": "https://commons.wikimedia.org/wiki/File:Sweden,_Stockholm,_Gamla_Stan_(Old_Town),_Dusk_150628-69.jpg",
+    "alt": "Where the city meets the water",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "orosi",
+    "src": "/images/door.webp",
+    "title": "Through coloured glass",
+    "location": "Tehran",
+    "year": "2026",
+    "category": "Details",
+    "mood": "Wonder",
+    "orientation": "square",
+    "tags": [
+      "light",
+      "wood"
+    ],
+    "connections": [
+      "reading-room"
+    ],
+    "caption": "Wood, geometry, and a little borrowed sunlight.",
+    "credit": "Architectural study · AI-generated",
+    "alt": "Through coloured glass",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "reading-room",
+    "src": "/images/library.webp",
+    "title": "Somewhere to linger",
+    "location": "Tehran",
+    "year": "2026",
+    "category": "Moments",
+    "mood": "Quiet",
+    "tags": [
+      "books",
+      "light"
+    ],
+    "connections": [
+      "little-prince",
+      "afternoon"
+    ],
+    "caption": "An imagined reading room in the afternoon light.",
+    "onward": {
+      "room": "library",
+      "label": "Linger a little longer in the Library"
+    },
+    "credit": "Architectural study · AI-generated",
+    "alt": "Somewhere to linger",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "little-prince",
+    "src": "/images/books/the-little-prince.jpg",
+    "title": "A small world between pages",
+    "category": "Details",
+    "mood": "Wonder",
+    "orientation": "portrait",
+    "tags": [
+      "books",
+      "stories"
+    ],
+    "connections": [
+      "reading-room"
+    ],
+    "caption": "A book cover from the existing shelf; a temporary study in small things.",
+    "credit": "The Little Prince · existing book-cover artwork",
+    "alt": "A small world between pages",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "ferdows",
+    "src": "/images/cinema/1.webp",
+    "title": "Beyond the garden path",
+    "location": "Bagh-e Ferdows",
+    "year": "2026",
+    "category": "Places",
+    "mood": "Wonder",
+    "tags": [
+      "cinema",
+      "garden"
+    ],
+    "connections": [
+      "screen-face"
+    ],
+    "caption": "A doorway between a garden and the stories on a screen.",
+    "onward": {
+      "room": "cinema",
+      "label": "Follow the garden path toward Cinema"
+    },
+    "credit": "Existing Bagh-e Ferdows collection · temporary study",
+    "alt": "Beyond the garden path",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "screen-face",
+    "src": "/images/cinema-titles/sherlock.jpg",
+    "title": "A familiar face, another story",
+    "category": "People",
+    "mood": "Curious",
+    "orientation": "portrait",
+    "tags": [
+      "cinema",
+      "stories"
+    ],
+    "connections": [
+      "ferdows"
+    ],
+    "caption": "A character from the cinema shelf. This temporary frame will later hold a personal portrait.",
+    "credit": "Sherlock · existing cinema artwork",
+    "alt": "A familiar face, another story",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "after-dark",
+    "src": "/images/courtyard-night.webp",
+    "title": "When the windows become lanterns",
+    "location": "Tehran",
+    "year": "2026",
+    "category": "Moments",
+    "mood": "Quiet",
+    "tags": [
+      "home",
+      "evening"
+    ],
+    "connections": [
+      "afternoon",
+      "stockholm-water"
+    ],
+    "caption": "The same courtyard, with a different kind of light.",
+    "credit": "Architectural study · AI-generated",
+    "alt": "When the windows become lanterns",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "stockholm-colour",
+    "src": "/images/travel/stockholm-2.webp",
+    "title": "Colours along the quay",
+    "location": "Stockholm",
+    "category": "Details",
+    "mood": "Wonder",
+    "orientation": "square",
+    "tags": [
+      "colour",
+      "water"
+    ],
+    "connections": [
+      "stockholm-water"
+    ],
+    "caption": "A row of façades; a rhythm to remember.",
+    "credit": "Roger W from Sarasota, Florida, U.S.A. · CC BY-SA 2.0 · resized to WebP",
+    "source": "https://commons.wikimedia.org/wiki/File:Stockhoim_-_Gamla_Stan_(3343920277).jpg",
+    "alt": "Colours along the quay",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "isfahan",
+    "src": "/images/travel/isfahan-1.webp",
+    "title": "A bridge after dusk",
+    "location": "Isfahan",
+    "category": "Places",
+    "mood": "Quiet",
+    "tags": [
+      "water",
+      "evening"
+    ],
+    "connections": [
+      "afternoon",
+      "stockholm-water"
+    ],
+    "caption": "A quiet line of light across the river.",
+    "credit": "s1ingshot from Berlin, Germany · CC BY 2.0 · resized to WebP",
+    "source": "https://commons.wikimedia.org/wiki/File:Pol-e_Khaju_(20853194169).jpg",
+    "alt": "A bridge after dusk",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  },
+  {
+    "id": "venice",
+    "src": "/images/travel/italy-3.webp",
+    "title": "A city written in water",
+    "location": "Venice",
+    "category": "Places",
+    "mood": "Wonder",
+    "tags": [
+      "water",
+      "colour"
+    ],
+    "connections": [
+      "stockholm-colour"
+    ],
+    "caption": "A horizon imagined through another city’s evening light.",
+    "credit": "Mustang Joe · CC0 · resized to WebP",
+    "source": "https://commons.wikimedia.org/wiki/File:Sunset_on_the_Grand_Canal_(48020437936).jpg",
+    "alt": "A city written in water",
+    "orientation": "landscape",
+    "color": "#b4a38c"
+  }
 ]
