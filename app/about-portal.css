@@ -34,3 +34,46 @@ body:has(.about-fatemeh-v2) {
 body:has(.about-fatemeh-v2) .garden-global-nav {
   visibility: hidden;
 }
+
+/* Contact now lives inside the About scene instead of the footer. */
+.world-footer > button:last-child {
+  display: none !important;
+}
+
+.world-footer .movement-hint {
+  margin-left: auto;
+}
+
+.about-v2-social-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  color: #d4bf98;
+  font-size: 11px;
+  letter-spacing: .12em;
+}
+
+.about-v2-social-links > span {
+  color: #d4b06f66;
+}
+
+.about-v2-social-links a {
+  padding: 2px 0 3px;
+  border-bottom: 1px solid #d4b06f42;
+  transition: color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.about-v2-social-links a:hover {
+  color: #f3e7d3;
+  border-color: #d7b7769a;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+  .about-v2-social-links {
+    margin-top: 16px;
+    font-size: 10px;
+    gap: 9px;
+  }
+}

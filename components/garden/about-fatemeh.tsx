@@ -479,6 +479,24 @@ export function AboutFatemeh({
             MAKER <span>·</span> TRAVELER <span>·</span> EXPLORER
           </div>
 
+          <div className="about-v2-social-links" dir="ltr" aria-label="Fatemeh social profiles">
+            <a
+              href="https://github.com/fatemeh-mohseni-AI"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+            <span aria-hidden="true">·</span>
+            <a
+              href="https://www.linkedin.com/in/fatemeh-mohseni-ai-developer/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
+          </div>
+
           <button className="about-v2-letter-cta" type="button" onClick={onOpenLetter}>
             <InkAndQuillIcon />
             <span>یک یادداشت برایم بگذار</span>
