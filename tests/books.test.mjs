@@ -8,13 +8,14 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const vite = await createServer({
   appType: "custom",
   configFile: false,
+  cacheDir: '.sites-runtime/test-vite',
   root,
   server: { middlewareMode: true },
 });
 after(() => vite.close());
 
 const { books } = await vite.ssrLoadModule("/lib/garden/books.ts");
-const { sheetPoint, tableAnchor } = await vite.ssrLoadModule('/lib/garden/book-geometry.ts');
+const { sheetPoint, tableAnchor, restingPageHeight, turningPagePoint } = await vite.ssrLoadModule('/lib/garden/book-geometry.ts');
 
 test("the shelf contains nine distinct book discoveries", () => {
   assert.deepEqual(
@@ -65,5 +66,16 @@ test('book projects onto the table through the room cover crop', () => {
   assert.equal(tableAnchor(1672,941).y,941*.584);
   for (const [w,h] of [[1920,1080],[1280,720],[800,1000],[390,220]]) {
     const a=tableAnchor(w,h); assert.ok(a.x>0&&a.x<w&&a.y>0&&a.y<h);
+  }
+});
+
+test('bound pages arch out of the gutter and turning endpoints join the stack', () => {
+  assert.ok(restingPageHeight(.3,.5)>restingPageHeight(0,.5)+.15);
+  for(const u of [0,.25,.5,.75,1]) for(const v of [0,.5,1]) {
+    for(const p of [0,1]) {
+      const point=turningPagePoint(u,v,p);
+      assert.ok(Math.abs(point.z-restingPageHeight(u,v))<1e-9);
+      assert.ok(Math.abs(point.x-(p===0?1:-1)*u*3.2)<1e-9);
+    }
   }
 });

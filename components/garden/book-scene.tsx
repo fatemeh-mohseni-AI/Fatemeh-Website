@@ -21,7 +21,6 @@ export function BookScene({ reduced, onDiscover }: { reduced: boolean; onDiscove
   const [open,setOpen]=useState(false);
   const [ready,setReady]=useState(false);
   const [unavailable,setUnavailable]=useState(false);
-  const [reading,setReading]=useState(false);
   const [mesh,setMesh]=useState<MeshState>({index:0,direction:1,progress:0,turning:false,opening:0});
   const state=useRef(mesh);
   const frame=useRef(0);
@@ -61,13 +60,13 @@ export function BookScene({ reduced, onDiscover }: { reduced: boolean; onDiscove
     if(locked.current) return;
     const rect=trigger.current!.getBoundingClientRect();
     setOrigin({x:rect.left+rect.width/2-window.innerWidth/2,y:rect.top+rect.height/2-window.innerHeight/2});
-    locked.current=true;setReady(false);setOpen(true);setReading(false);onDiscover();
+    locked.current=true;setReady(false);setUnavailable(false);setOpen(true);onDiscover();
     update({...state.current,turning:false,opening:reduced?1:0});
   };
   const startOpening=()=>animate(0,1,1500,p=>update({...state.current,opening:clamp((p-.2)/.8)}),()=>{locked.current=false;setReady(true);});
   const graphicsUnavailable=()=>{
     cancelAnimationFrame(frame.current);locked.current=false;
-    setUnavailable(true);setReading(true);setReady(true);
+    setUnavailable(true);setReady(true);
     update({...state.current,opening:1,turning:false});
   };
   const close=()=>{
@@ -114,8 +113,8 @@ export function BookScene({ reduced, onDiscover }: { reduced: boolean; onDiscove
     <div className="book-table-surface" ref={surface} style={vars}>
       <DialogTrigger asChild>
         <button ref={trigger} className="table-book" aria-label="Open the library book collection">
-          <span className="table-book-cover"><img src={books[0].coverImage} alt={books[0].coverAlt} draggable={false}/></span>
-          <span className="table-book-hint">A book is waiting</span>
+          <span className="table-book-cover" aria-hidden="true"/>
+          <span className="table-book-hint">Open the book</span>
         </button>
       </DialogTrigger>
     </div>
@@ -141,10 +140,9 @@ export function BookScene({ reduced, onDiscover }: { reduced: boolean; onDiscove
                 <BookMesh state={mesh} onReady={startOpening} onUnavailable={graphicsUnavailable}/>
               </Suspense>
             </GraphicsBoundary>
-            {unavailable&&<p className="book-loading">3D is unavailable on this device. The reading view remains available below.</p>}
+            {unavailable&&<p className="book-loading" role="status">The book could not open. Please try again in a browser with graphics acceleration enabled.</p>}
           </div>
-          <section className="library-book-reading" hidden={!reading&&!unavailable} aria-label="Readable book details">
-            <img src={book.coverImage} alt={book.coverAlt}/>
+          <section className="sr-only" aria-label="Current book">
             <div><h2>{book.title}</h2><p>{book.author}</p><p>{book.description}</p>
               {book.quotes.map(q=><blockquote key={q}>“{q}”</blockquote>)}
               {book.personalNote&&<p><small>Reading note · draft</small><br/>{book.personalNote}</p>}
@@ -155,7 +153,6 @@ export function BookScene({ reduced, onDiscover }: { reduced: boolean; onDiscove
           <button aria-label="Previous book" disabled={!ready||mesh.turning||mesh.index===0} onClick={()=>turn(-1)}><ArrowLeft/></button>
           <div role="status" aria-live="polite"><span>{mesh.index+1} / {books.length} books · {book.title}</span><small>Drag a lower page corner to turn</small></div>
           <button aria-label="Next book" disabled={!ready||mesh.turning||mesh.index===books.length-1} onClick={()=>turn(1)}><ArrowRight/></button>
-          <button className="book-reading-toggle" aria-expanded={reading} onClick={()=>setReading(v=>!v)}>Reading view</button>
         </footer>
       </Primitive.Content>
     </DialogPortal>
