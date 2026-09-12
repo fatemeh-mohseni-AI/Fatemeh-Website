@@ -10,6 +10,12 @@ export function isTehranNight(date: Date = new Date()): boolean {
   return hour >= 20 || hour < 6;
 }
 
+export type TehranLighting = "day" | "sunset" | "night";
+export function tehranLighting(date: Date = new Date()): TehranLighting {
+  if (isTehranNight(date)) return "night";
+  return Number(tehranHour.format(date)) >= 17 ? "sunset" : "day";
+}
+
 export const COURTYARD_WIDTH = 1672;
 export const COURTYARD_HEIGHT = 941;
 

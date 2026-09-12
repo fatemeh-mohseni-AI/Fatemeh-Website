@@ -10,7 +10,7 @@ export type SceneTransitionConfig = {
   timing: { focus: number; approach: number; environment: number; settle: number; reveal: number };
 };
 
-// Only courtyard → cinema opts in. Room navigation and history stay in Garden.
+// Room navigation and history stay in Garden; destinations opt into a shared runner.
 export const cinemaTransition: SceneTransitionConfig = {
   destination: "cinema",
   title: "Cinema & Culture",
@@ -27,8 +27,19 @@ export const cinemaTransition: SceneTransitionConfig = {
   timing: { focus: 2000, approach: 2200, environment: 1800, settle: 300, reveal: 1100 },
 };
 
+export const galleryTransition: SceneTransitionConfig = {
+  destination: "gallery",
+  title: "The Memory Gallery",
+  environmentName: "A quiet room beyond the courtyard",
+  persianLabel: "خانهٔ خاطره‌ها",
+  images: ["/images/door.webp"],
+  hotspot: { x: .75, y: .49 },
+  timing: { focus: 250, approach: 400, environment: 400, settle: 80, reveal: 400 },
+};
+
 export const sceneTransitions: Partial<Record<RoomId, SceneTransitionConfig>> = {
   cinema: cinemaTransition,
+  gallery: galleryTransition,
 };
 
 export type EntryPhase = "preparing" | "focus" | "approach" | "environment" | "settle" | "reveal";

@@ -40,7 +40,7 @@ export function SceneTransition({ config, image, phase, imageReady, reduced, onC
   const cancelButton = useRef<HTMLButtonElement>(null);
   useEffect(() => { cancelButton.current?.focus({ preventScroll: true }); }, []);
   return (
-    <div className={`scene-entry ${reduced ? "scene-entry--reduced" : ""}`} data-phase={phase}
+    <div className={`scene-entry ${reduced ? "scene-entry--reduced" : ""}`} data-phase={phase} data-destination={config.destination}
       onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); onCancel(); } }}>
       <div className="scene-entry__environment">
         {imageReady && <SceneEnvironment image={image} />}
@@ -51,7 +51,7 @@ export function SceneTransition({ config, image, phase, imageReady, reduced, onC
         <p>{phase === "preparing" ? `Preparing ${config.title}…` : `Entering ${config.title}`}</p>
         <small>{config.environmentName}</small>
       </div>
-      {phase !== "preparing" && <BaghFerdowsStory journey />}
+      {phase !== "preparing" && config.destination === "cinema" && <BaghFerdowsStory journey />}
       <button ref={cancelButton} className="scene-entry__cancel" onClick={onCancel}>
         Back to the courtyard
       </button>

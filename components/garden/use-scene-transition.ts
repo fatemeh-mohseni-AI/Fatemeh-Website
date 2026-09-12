@@ -108,7 +108,7 @@ export function useSceneTransition({ commit, preload, notify }: {
         if (!controller.signal.aborted) {
           locked.current = false;
           setRequest(null);
-          notify("The cinema could not open. Please try again.");
+          notify(`${request.config.title} could not open. Please try again.`);
           requestAnimationFrame(() => {
             if (!controller.signal.aborted) trigger.current?.focus({ preventScroll: true });
           });
