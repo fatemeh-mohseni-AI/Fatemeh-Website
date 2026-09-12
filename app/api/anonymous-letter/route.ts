@@ -81,13 +81,14 @@ function getHmacSecret() {
 }
 
 async function ensureStorageSchema() {
-  if (!env.DB) {
+  const database = env.DB;
+  if (!database) {
     throw new Error("Cloudflare D1 binding DB is unavailable.");
   }
 
   if (!storageReady) {
     storageReady = (async () => {
-      await env.DB.prepare(`
+      await database.prepare(`
         CREATE TABLE IF NOT EXISTS anonymous_messages (
           id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
           body TEXT NOT NULL,
@@ -99,7 +100,7 @@ async function ensureStorageSchema() {
         )
       `).run();
 
-      await env.DB.prepare(`
+      await database.prepare(`
         CREATE INDEX IF NOT EXISTS anonymous_messages_ip_created_idx
         ON anonymous_messages (ip_hash, created_at)
       `).run();
