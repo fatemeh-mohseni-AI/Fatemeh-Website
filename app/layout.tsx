@@ -5,6 +5,7 @@ import "./cinema-transition.css";
 import "./library-book.css";
 import "./courtyard-travel.css";
 import "./anonymous-letters.css";
+import "./anonymous-letters-layer.css";
 
 export const metadata: Metadata = {
   title: "Fatemeh Mohseni — A Little World of My Own",
