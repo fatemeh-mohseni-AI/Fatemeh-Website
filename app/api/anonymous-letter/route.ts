@@ -17,12 +17,16 @@ const requestSchema = z.object({
 
 type DeviceType = "desktop" | "mobile" | "tablet" | "bot";
 
+let storageReady: Promise<void> | null = null;
+let ephemeralHmacSecret: string | null = null;
+let warnedAboutEphemeralSecret = false;
+
 function getClientIp(request: Request) {
   const cloudflareIp = request.headers.get("cf-connecting-ip")?.trim();
   if (cloudflareIp) return cloudflareIp;
 
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return forwarded || "unavailable";
+  return forwarded || null;
 }
 
 function getBrowserFamily(userAgent: string) {
@@ -54,6 +58,60 @@ async function hmacIp(ip: string, secret: string) {
   return Array.from(new Uint8Array(signature), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+function randomSecret() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function getHmacSecret() {
+  const configured = env.ANONYMOUS_LETTER_HMAC_SECRET?.trim();
+  if (configured) return configured;
+
+  // Do not make message delivery depend on an optional deployment secret.
+  // The fallback is random per worker isolate, so raw IP addresses still never
+  // reach storage. Configure the secret in production for durable rate limits.
+  ephemeralHmacSecret ??= randomSecret();
+  if (!warnedAboutEphemeralSecret) {
+    warnedAboutEphemeralSecret = true;
+    console.warn(
+      "ANONYMOUS_LETTER_HMAC_SECRET is not configured; using an ephemeral in-memory key. Message delivery works, but rate limiting resets across worker isolates.",
+    );
+  }
+  return ephemeralHmacSecret;
+}
+
+async function ensureStorageSchema() {
+  if (!env.DB) {
+    throw new Error("Cloudflare D1 binding DB is unavailable.");
+  }
+
+  if (!storageReady) {
+    storageReady = (async () => {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS anonymous_messages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+          body TEXT NOT NULL,
+          created_at INTEGER NOT NULL,
+          source_route TEXT NOT NULL,
+          ip_hash TEXT NOT NULL,
+          browser_family TEXT NOT NULL,
+          device_type TEXT NOT NULL
+        )
+      `).run();
+
+      await env.DB.prepare(`
+        CREATE INDEX IF NOT EXISTS anonymous_messages_ip_created_idx
+        ON anonymous_messages (ip_hash, created_at)
+      `).run();
+    })().catch((error) => {
+      storageReady = null;
+      throw error;
+    });
+  }
+
+  await storageReady;
+}
+
 function json(data: unknown, init?: ResponseInit) {
   return Response.json(data, {
     ...init,
@@ -65,58 +123,80 @@ function json(data: unknown, init?: ResponseInit) {
 }
 
 export async function POST(request: Request) {
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return json({ error: "درخواست معتبر نیست.", code: "invalid_content_type" }, { status: 415 });
+  }
+
   const contentLength = Number(request.headers.get("content-length") || "0");
   if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BYTES) {
-    return json({ error: "پیام بیش از حد بزرگ است." }, { status: 413 });
+    return json({ error: "پیام بیش از حد بزرگ است.", code: "request_too_large" }, { status: 413 });
   }
 
   const raw = await request.text();
   if (raw.length > MAX_REQUEST_BYTES) {
-    return json({ error: "پیام بیش از حد بزرگ است." }, { status: 413 });
+    return json({ error: "پیام بیش از حد بزرگ است.", code: "request_too_large" }, { status: 413 });
   }
 
   let payload: unknown;
   try {
     payload = JSON.parse(raw);
   } catch {
-    return json({ error: "درخواست معتبر نیست." }, { status: 400 });
+    return json({ error: "درخواست معتبر نیست.", code: "invalid_json" }, { status: 400 });
   }
 
   const parsed = requestSchema.safeParse(payload);
   if (!parsed.success) {
-    return json({ error: "متن یادداشت باید بین ۱ تا ۱۵۰۰ نویسه باشد." }, { status: 400 });
+    return json(
+      { error: "متن یادداشت باید بین ۱ تا ۱۵۰۰ نویسه باشد.", code: "invalid_message" },
+      { status: 400 },
+    );
   }
 
+  // Honeypot: pretend success so automated submissions do not learn the trap.
   if (parsed.data.website.trim()) {
-    return json({ ok: true });
+    return json({ ok: true }, { status: 201 });
   }
 
-  const secret = env.ANONYMOUS_LETTER_HMAC_SECRET;
-  if (!secret || !env.DB) {
-    return json({ error: "امکان دریافت پیام موقتاً در دسترس نیست." }, { status: 503 });
+  if (!env.DB) {
+    return json(
+      { error: "دیتابیس پیام‌ها در این محیط فعال نیست.", code: "database_unavailable" },
+      { status: 503 },
+    );
   }
 
   try {
-    const ipHash = await hmacIp(getClientIp(request), secret);
+    await ensureStorageSchema();
+
+    const clientIp = getClientIp(request);
+    const secret = getHmacSecret();
+    const ipHash = clientIp ? await hmacIp(clientIp, secret) : "unavailable";
     const userAgent = request.headers.get("user-agent") ?? "";
     const db = getDb();
-    const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
 
-    const [recent] = await db
-      .select({ value: count() })
-      .from(anonymousMessages)
-      .where(
-        and(
-          eq(anonymousMessages.ipHash, ipHash),
-          gte(anonymousMessages.createdAt, cutoff),
-        ),
-      );
+    // If an IP is not available (common in some local preview setups), do not
+    // collapse every visitor into one shared rate-limit bucket.
+    if (clientIp) {
+      const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+      const [recent] = await db
+        .select({ value: count() })
+        .from(anonymousMessages)
+        .where(
+          and(
+            eq(anonymousMessages.ipHash, ipHash),
+            gte(anonymousMessages.createdAt, cutoff),
+          ),
+        );
 
-    if (Number(recent?.value ?? 0) >= RATE_LIMIT_MAX) {
-      return json(
-        { error: "چند یادداشت پشت سر هم فرستاده شده. کمی بعد دوباره امتحان کن." },
-        { status: 429, headers: { "retry-after": "600" } },
-      );
+      if (Number(recent?.value ?? 0) >= RATE_LIMIT_MAX) {
+        return json(
+          {
+            error: "چند یادداشت پشت سر هم فرستاده شده. کمی بعد دوباره امتحان کن.",
+            code: "rate_limited",
+          },
+          { status: 429, headers: { "retry-after": "600" } },
+        );
+      }
     }
 
     await db.insert(anonymousMessages).values({
@@ -129,7 +209,13 @@ export async function POST(request: Request) {
     });
 
     return json({ ok: true }, { status: 201 });
-  } catch {
-    return json({ error: "پیام فرستاده نشد. دوباره امتحان کن." }, { status: 500 });
+  } catch (error) {
+    // Never log message contents or request headers. The error itself is enough
+    // to diagnose binding/schema failures without leaking visitor data.
+    console.error("Anonymous letter persistence failed", error);
+    return json(
+      { error: "پیام ذخیره نشد. دوباره امتحان کن.", code: "persistence_failed" },
+      { status: 500 },
+    );
   }
 }
