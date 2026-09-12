@@ -11,6 +11,16 @@ export const locationSchema = z.object({
   shortNote: z.string().max(240).optional(),
   markerIcon: z.enum(["home", "compass", "star"]).optional(),
   images: z.array(z.string().startsWith("/images/")).max(12).default([]),
+  photoCredits: z.array(z.object({
+    src: z.string().startsWith("/images/"),
+    caption: z.string().max(400),
+    author: z.string().max(500),
+    license: z.string().max(120),
+    source: z.string().url().startsWith("https://"),
+    licenseUrl: z.string().url().startsWith("https://"),
+    width: z.number().positive(),
+    height: z.number().positive(),
+  })).max(12).default([]),
   googleEarthLink: z.string().default(""),
 });
 export const locationsSchema = z

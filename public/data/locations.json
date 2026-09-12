@@ -10,8 +10,44 @@
     "description": "The place where the journey begins — familiar streets, changing light, and the quiet coordinates of home.",
     "shortNote": "The place where the journey begins.",
     "markerIcon": "home",
-    "images": ["/images/courtyard.webp", "/images/door.webp", "/images/library.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/35.6892,51.389"
+    "images": [
+      "/images/travel/tehran-1.webp",
+      "/images/travel/tehran-2.webp",
+      "/images/travel/tehran-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/35.6892,51.389",
+    "photoCredits": [
+      {
+        "src": "/images/travel/tehran-1.webp",
+        "caption": "Azadi Tower, Tehran",
+        "author": "Bernard Gagnon",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Azadi_Tower,_Tehran.jpg",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/images/travel/tehran-2.webp",
+        "caption": "Azadi Tower after dark",
+        "author": "بهادر های زاده",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Azadi_Tower_at_night_III.jpg",
+        "width": 1200,
+        "height": 675
+      },
+      {
+        "src": "/images/travel/tehran-3.webp",
+        "caption": "Tehran skyline and the Alborz Mountains",
+        "author": "Julia Maudlin from Lake Oswego, Oregon, USA",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Tehran_Skyline,_Milad_Tower_and_Alborz_Mountains,_Iran_(10059004754).jpg",
+        "width": 1200,
+        "height": 900
+      }
+    ]
   },
   {
     "id": "isfahan",
@@ -24,8 +60,44 @@
     "description": "Nesf-e Jahan — a city of beauty, geometry, and memory, where blue tilework and grand avenues seem to hold time still.",
     "shortNote": "Beauty, geometry, and memory.",
     "markerIcon": "compass",
-    "images": ["/images/door.webp", "/images/courtyard.webp", "/images/library.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/32.6546,51.668"
+    "images": [
+      "/images/travel/isfahan-1.webp",
+      "/images/travel/isfahan-2.webp",
+      "/images/travel/isfahan-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/32.6546,51.668",
+    "photoCredits": [
+      {
+        "src": "/images/travel/isfahan-1.webp",
+        "caption": "Khaju Bridge reflected in the Zayanderud",
+        "author": "s1ingshot from Berlin, Germany",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Pol-e_Khaju_(20853194169).jpg",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/images/travel/isfahan-2.webp",
+        "caption": "The central arches of Khaju Bridge",
+        "author": "Bernard Gagnon",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Khaju_Bridge,_Isfahan_04.jpg",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/images/travel/isfahan-3.webp",
+        "caption": "A walk across Khaju Bridge",
+        "author": "Diego Delso",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Puente_Khajou,_Isfah%C3%A1n,_Ir%C3%A1n,_2016-09-20,_DD_128.jpg",
+        "width": 1200,
+        "height": 795
+      }
+    ]
   },
   {
     "id": "stockholm",
@@ -37,8 +109,44 @@
     "description": "An archipelago city shaped by water, northern light, and a calm dialogue between old streets and contemporary life.",
     "shortNote": "Northern light across an island city.",
     "markerIcon": "compass",
-    "images": ["/images/library.webp", "/images/door.webp", "/images/courtyard.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/59.3293,18.0686"
+    "images": [
+      "/images/travel/stockholm-1.webp",
+      "/images/travel/stockholm-2.webp",
+      "/images/travel/stockholm-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/59.3293,18.0686",
+    "photoCredits": [
+      {
+        "src": "/images/travel/stockholm-1.webp",
+        "caption": "Gamla Stan across the water",
+        "author": "Dkganesh",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Gamla_stan.jpg",
+        "width": 1200,
+        "height": 796
+      },
+      {
+        "src": "/images/travel/stockholm-2.webp",
+        "caption": "Colourful waterfront of the Old Town",
+        "author": "Roger W from Sarasota, Florida, U.S.A.",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Stockhoim_-_Gamla_Stan_(3343920277).jpg",
+        "width": 1000,
+        "height": 624
+      },
+      {
+        "src": "/images/travel/stockholm-3.webp",
+        "caption": "Stockholm at dusk",
+        "author": "Richardmaackphotography",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Sweden,_Stockholm,_Gamla_Stan_(Old_Town),_Dusk_150628-69.jpg",
+        "width": 1200,
+        "height": 800
+      }
+    ]
   },
   {
     "id": "ankara",
@@ -50,8 +158,44 @@
     "description": "A capital of layered histories, broad horizons, and everyday moments gathered between the old citadel and the modern city.",
     "shortNote": "A modern capital with ancient layers.",
     "markerIcon": "compass",
-    "images": ["/images/courtyard.webp", "/images/library.webp", "/images/door.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/39.9334,32.8597"
+    "images": [
+      "/images/travel/ankara-1.webp",
+      "/images/travel/ankara-2.webp",
+      "/images/travel/ankara-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/39.9334,32.8597",
+    "photoCredits": [
+      {
+        "src": "/images/travel/ankara-1.webp",
+        "caption": "Anıtkabir, Ankara",
+        "author": "Diego Delso",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:An%C4%B1tkabir,_Ankara,_Turqu%C3%ADa,_2024-10-03,_DD_20.jpg",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/images/travel/ankara-2.webp",
+        "caption": "The carved lions of Anıtkabir",
+        "author": "Diego Delso",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:An%C4%B1tkabir,_Ankara,_Turqu%C3%ADa,_2024-10-03,_DD_26.jpg",
+        "width": 1200,
+        "height": 610
+      },
+      {
+        "src": "/images/travel/ankara-3.webp",
+        "caption": "The tree-lined Road of Lions",
+        "author": "Diego Delso",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:An%C4%B1tkabir,_Ankara,_Turqu%C3%ADa,_2024-10-03,_DD_27.jpg",
+        "width": 1200,
+        "height": 565
+      }
+    ]
   },
   {
     "id": "antarctica",
@@ -63,8 +207,44 @@
     "description": "A white edge of the world — immense, quiet, and almost abstract in its scale.",
     "shortNote": "A white edge of the world.",
     "markerIcon": "star",
-    "images": ["/images/earth.webp", "/images/door.webp", "/images/library.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/-75,0"
+    "images": [
+      "/images/travel/antarctica-1.webp",
+      "/images/travel/antarctica-2.webp",
+      "/images/travel/antarctica-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/-75,0",
+    "photoCredits": [
+      {
+        "src": "/images/travel/antarctica-1.webp",
+        "caption": "Antarctic coast and drifting ice",
+        "author": "Pedro Szekely",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Antarctica_Landscape.jpg",
+        "width": 1200,
+        "height": 675
+      },
+      {
+        "src": "/images/travel/antarctica-2.webp",
+        "caption": "Sculpted Antarctic iceberg",
+        "author": "Pedro Szekely from Los Angeles, USA",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Antarctica_iceberg_-_Flickr_-_szeke.jpg",
+        "width": 1200,
+        "height": 675
+      },
+      {
+        "src": "/images/travel/antarctica-3.webp",
+        "caption": "Icebergs and Antarctic mountains",
+        "author": "Pedro Szekely from Los Angeles, USA",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Antarctica_landscape_-_Flickr_-_szeke_(2).jpg",
+        "width": 1200,
+        "height": 800
+      }
+    ]
   },
   {
     "id": "paris",
@@ -76,8 +256,44 @@
     "description": "A city imagined through art, long walks, quiet cafés, and the changing light along the Seine.",
     "shortNote": "Art, streets, and light along the Seine.",
     "markerIcon": "star",
-    "images": ["/images/door.webp", "/images/library.webp", "/images/courtyard.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/48.8566,2.3522"
+    "images": [
+      "/images/travel/paris-1.webp",
+      "/images/travel/paris-2.webp",
+      "/images/travel/paris-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/48.8566,2.3522",
+    "photoCredits": [
+      {
+        "src": "/images/travel/paris-1.webp",
+        "caption": "Eiffel Tower and Pont Alexandre III at night",
+        "author": "Getfunky Paris",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Eiffel_Tower_and_Pont_Alexandre_III_at_night.jpg",
+        "width": 1200,
+        "height": 769
+      },
+      {
+        "src": "/images/travel/paris-2.webp",
+        "caption": "The Louvre Pyramid at sunset",
+        "author": "Babyaimeesmom",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cour_Napol%C3%A9on_%26_Louvre_Pyramid_at_Sunset.jpg",
+        "width": 1200,
+        "height": 767
+      },
+      {
+        "src": "/images/travel/paris-3.webp",
+        "caption": "A view over Paris from the Eiffel Tower",
+        "author": "Dietmar Rabich",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Paris,_Eiffelturm,_Teleskop_--_2014_--_1272.jpg",
+        "width": 1116,
+        "height": 900
+      }
+    ]
   },
   {
     "id": "italy",
@@ -89,8 +305,44 @@
     "description": "A future journey through art, food, architecture, and the landscapes that connect one storied city to the next.",
     "shortNote": "A country best discovered slowly.",
     "markerIcon": "star",
-    "images": ["/images/courtyard.webp", "/images/door.webp", "/images/library.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/41.9028,12.4964"
+    "images": [
+      "/images/travel/italy-1.webp",
+      "/images/travel/italy-2.webp",
+      "/images/travel/italy-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/41.9028,12.4964",
+    "photoCredits": [
+      {
+        "src": "/images/travel/italy-1.webp",
+        "caption": "The Colosseum at blue hour, Rome",
+        "author": "Diliff",
+        "license": "CC BY-SA 2.5",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+        "source": "https://commons.wikimedia.org/wiki/File:Colosseum_in_Rome,_Italy_-_April_2007.jpg",
+        "width": 1200,
+        "height": 704
+      },
+      {
+        "src": "/images/travel/italy-2.webp",
+        "caption": "Evening light at the Colosseum",
+        "author": "Wilfredor",
+        "license": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Colosseum_of_Rome,_Italy.jpg",
+        "width": 1200,
+        "height": 756
+      },
+      {
+        "src": "/images/travel/italy-3.webp",
+        "caption": "Sunset on the Grand Canal, Venice",
+        "author": "Mustang Joe",
+        "license": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Sunset_on_the_Grand_Canal_(48020437936).jpg",
+        "width": 1200,
+        "height": 801
+      }
+    ]
   },
   {
     "id": "amazon-rainforest",
@@ -102,8 +354,44 @@
     "description": "A living green world of rivers, rain, and extraordinary biodiversity, vast enough to redraw one’s sense of scale.",
     "shortNote": "A green world written by rivers and rain.",
     "markerIcon": "star",
-    "images": ["/images/library.webp", "/images/courtyard.webp", "/images/door.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/-3.4653,-62.2159"
+    "images": [
+      "/images/travel/amazon-rainforest-1.webp",
+      "/images/travel/amazon-rainforest-2.webp",
+      "/images/travel/amazon-rainforest-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/-3.4653,-62.2159",
+    "photoCredits": [
+      {
+        "src": "/images/travel/amazon-rainforest-1.webp",
+        "caption": "Aerial view of the Amazon rainforest",
+        "author": "lubasi",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Aerial_view_of_the_Amazon_Rainforest.jpg",
+        "width": 1200,
+        "height": 737
+      },
+      {
+        "src": "/images/travel/amazon-rainforest-2.webp",
+        "caption": "Winding waterways of the Amazon",
+        "author": "Alexander Gerst",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Amazon_River_-_2018.jpg",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/images/travel/amazon-rainforest-3.webp",
+        "caption": "Rainforest along the Rio Negro, near Manaus",
+        "author": "James Martins",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Amazon_rainforest_manaus_APA_Margem_Esquerda_do_Rio_Negro_-_panoramio.jpg",
+        "width": 1200,
+        "height": 800
+      }
+    ]
   },
   {
     "id": "cape-town",
@@ -115,7 +403,43 @@
     "description": "A meeting point of mountain, ocean, layered histories, and a horizon that always seems to invite another look.",
     "shortNote": "Where mountain and ocean meet.",
     "markerIcon": "star",
-    "images": ["/images/earth.webp", "/images/courtyard.webp", "/images/door.webp"],
-    "googleEarthLink": "https://earth.google.com/web/search/-33.9249,18.4241"
+    "images": [
+      "/images/travel/cape-town-1.webp",
+      "/images/travel/cape-town-2.webp",
+      "/images/travel/cape-town-3.webp"
+    ],
+    "googleEarthLink": "https://earth.google.com/web/search/-33.9249,18.4241",
+    "photoCredits": [
+      {
+        "src": "/images/travel/cape-town-1.webp",
+        "caption": "A panorama from Table Mountain",
+        "author": "Dietmar Rabich",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cape_Town_(ZA),_Table_Mountain_--_2024_--_2794%2B96%2B98%2B2800%2B01.jpg",
+        "width": 1200,
+        "height": 391
+      },
+      {
+        "src": "/images/travel/cape-town-2.webp",
+        "caption": "V&A Waterfront and Table Mountain",
+        "author": "Josep M. Gracia",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:CT_-_V%26A_Waterfront_with_Table_Mountain,_Cape_Town,_South_Africa,_2017.jpg",
+        "width": 1200,
+        "height": 797
+      },
+      {
+        "src": "/images/travel/cape-town-3.webp",
+        "caption": "Clouds rolling over Table Mountain",
+        "author": "Dietmar Rabich",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cape_Town_(ZA),_Table_Mountain_--_2024_--_3437.jpg",
+        "width": 1200,
+        "height": 675
+      }
+    ]
   }
 ]

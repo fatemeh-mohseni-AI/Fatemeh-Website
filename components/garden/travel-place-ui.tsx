@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Compass,
   ExternalLink,
@@ -15,6 +16,34 @@ const categoryCopy = {
   visited: { label: "Visited", Icon: MapPin },
   dream: { label: "Dream destination", Icon: Sparkles },
 };
+
+function TravelPhoto({ src, credit, name, index }: {
+  src: string;
+  credit: Location["photoCredits"][number] | undefined;
+  name: string;
+  index: number;
+}) {
+  const [failed, setFailed] = useState(false);
+  const caption = credit?.caption ?? `${name} · photograph ${index + 1}`;
+  return (
+    <figure>
+      {failed ? <p className="photo-unavailable">This photograph could not be loaded.</p> : (
+        <a className="travel-photo-link" href={src} target="_blank" rel="noopener noreferrer" aria-label={`View photograph: ${caption}`}>
+          <img src={src} alt={caption} width={credit?.width ?? 1200} height={credit?.height ?? 800}
+            loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />
+        </a>
+      )}
+      <figcaption>
+        <span>{caption}</span>
+        {credit && <span className="photo-credit">
+          <a href={credit.source} target="_blank" rel="noopener noreferrer">{credit.author}</a>
+          {" · "}<a href={credit.licenseUrl} target="_blank" rel="noopener noreferrer">{credit.license}</a>
+          {" · resized to WebP"}
+        </span>}
+      </figcaption>
+    </figure>
+  );
+}
 
 export function TravelPlaceButton({
   location,
@@ -79,19 +108,11 @@ export function TravelDetail({
       {location.images.length > 0 && (
         <div
           className="travel-gallery"
-          aria-label={`${location.name} placeholder gallery`}
+          aria-label={`${location.name} photographs`}
         >
           {location.images.slice(0, 3).map((image, index) => (
-            <figure key={`${image}-${index}`}>
-              <img
-                src={image}
-                alt="Placeholder awaiting a personal travel photograph"
-                loading="lazy"
-              />
-              <figcaption>
-                Placeholder {String(index + 1).padStart(2, "0")}
-              </figcaption>
-            </figure>
+            <TravelPhoto key={image} src={image} name={location.name} index={index}
+              credit={location.photoCredits.find((photo) => photo.src === image)} />
           ))}
         </div>
       )}

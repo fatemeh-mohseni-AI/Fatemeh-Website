@@ -1,0 +1,51 @@
+/* Artwork layers share the photograph's cover crop and camera transform. */
+.courtyard-artwork { position: absolute; inset: 0; pointer-events: none; }
+.courtyard-night { position: absolute; inset: 0; opacity: 0; transition: opacity 1.8s ease; }
+.courtyard-night.is-loaded { opacity: 1; }
+.fountain-registration { position: absolute; pointer-events: none; }
+.fountain-water { width: 100%; height: 100%; overflow: visible; opacity: 0; transition: opacity .45s ease; }
+.fountain-water.is-flowing { opacity: 1; }
+.fountain-hotspot { position: absolute; left: 50.06%; top: 69.9%; transform: translate(-50%, -50%); border: 0; border-radius: 50%; background: transparent; cursor: pointer; pointer-events: auto; touch-action: manipulation; }
+.fountain-hotspot:focus-visible { outline: 1px solid #d4efeb; outline-offset: 4px; box-shadow: 0 0 22px #c2ecea35; }
+.fountain-hotspot:disabled { pointer-events: none; }
+.fountain-jet { stroke-dasharray: 11 3 4 2; animation: fountain-flow .7s linear infinite; }
+.fountain-jet--fine { animation-duration: .95s; opacity: .65; }
+.fountain-fall { stroke-dasharray: 7 4 2 3; animation: fountain-flow .48s linear infinite; animation-delay: var(--stream-delay); }
+.fountain-ripple { transform-box: fill-box; transform-origin: center; animation: fountain-ripple 2.7s ease-out infinite; }
+.fountain-droplet { animation: fountain-splash .85s ease-out infinite; }
+.fountain-water:not(.is-flowing) * { animation-play-state: paused; }
+.fountain-water.is-still * { animation: none; }
+.fountain-water.is-still .fountain-droplet { opacity: .35; }
+@keyframes fountain-flow { to { stroke-dashoffset: -40; } }
+@keyframes fountain-ripple { from { transform: scale(.8); opacity: .45; } to { transform: scale(2.4, 2.1); opacity: 0; } }
+@keyframes fountain-splash { 0% { transform: translateY(0); opacity: 0; } 25% { opacity: .55; } 55% { transform: translateY(-5px); opacity: .35; } 100% { transform: translateY(3px); opacity: 0; } }
+
+/* A quiet Milky Way behind the atlas, with the globe kept in the foreground. */
+.room-travel .world-underlay { background: #030407; }
+.room-travel .room-content { background: transparent; }
+.room-travel .world-underlay::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, #02030699, #02030655 48%, #020306bb), url('/images/travel/milky-way.webp') center / cover;
+  opacity: .24;
+}
+.room-travel .world-underlay::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 52% 48%, transparent 10%, #02030677 80%), linear-gradient(#02030699, transparent 22%, transparent 75%, #020306);
+}
+.room-travel .travel-detail { background: linear-gradient(145deg, #0d1119f7, #090d16f5); box-shadow: 0 28px 70px #0009; }
+.travel-gallery { grid-template-columns: 1fr; gap: 12px; }
+.travel-gallery img { height: auto; aspect-ratio: 16 / 10; opacity: 1; filter: none; }
+.travel-gallery figcaption { position: static; padding: 8px 9px; background: #0a1019; font-size: .68rem; line-height: 1.5; letter-spacing: 0; }
+.travel-gallery figcaption > span { display: block; }
+.travel-gallery .photo-credit { color: #adb9c8; font-size: .6rem; margin-top: 3px; }
+.photo-credit a { text-decoration: underline; text-underline-offset: 2px; }
+.travel-gallery .photo-unavailable { padding: 32px 12px; color: #c9d1dc; font-size: .8rem; }
+.travel-photo-link { display: block; }
+.travel-photo-link:focus-visible { outline: 2px solid #d4b77d; outline-offset: -2px; }
+.travel-photo-link img { transition: transform .4s ease; }
+.travel-photo-link:hover img { transform: scale(1.025); }
+@media (prefers-reduced-motion: reduce) {
+  .courtyard-night, .fountain-water, .travel-photo-link img { transition: none; }
+  .fountain-water * { animation: none; }
+}
+.reduced-motion .courtyard-night, .reduced-motion .fountain-water, .reduced-motion .travel-photo-link img { transition: none; }

@@ -22,5 +22,16 @@
       "prompt": "Use case: photorealistic-natural\nAsset type: production website interior scene background, wide 16:9 photograph.\nPrimary request: photoreal cinematic warm Persian-modern private library interior, with carved wood bookshelves, a big Orosi window, reading table, Persian rug, cream plaster arch, and plants. Gold afternoon sunlight enters the jewel colored Orosi glass. An unoccupied, personal, intimate room with a refined editorial photograph aesthetic.\nComposition/framing: welcoming eye-level wide 16:9 interior architectural view that shows reading table, bookshelves, window, rug, and arch harmoniously, rich natural texture, warm calm atmosphere.\nConstraints: no people, no readable text, no watermark, no political or religious symbols. Create exactly one image.",
       "assetPath": "/images/library.webp"
     }
+  ],
+  "edits": [
+    {
+      "name": "persian-courtyard-night",
+      "generationDate": "2026-09-12",
+      "generator": "built-in image_gen.imagegen",
+      "mode": "lighting-weather edit",
+      "sourceAssetPath": "/images/courtyard.webp",
+      "assetPath": "/images/courtyard-night.webp",
+      "prompt": "Use case: lighting-weather. Edit target: the provided Persian courtyard photograph, for a website day/night switch. Create a NIGHT version of exactly this image. Preserve the precise camera, dimensions/aspect 1672:941, composition, architectural geometry, tree and furniture placement, pool and the small fountain at center (x50%, y70%), every object and its position. ONLY change time of day and illumination. Deep midnight blue sky, gentle cool moonlight, restrained warm amber glow through the existing windows and lanterns reflected naturally in pool. Beautiful calm believable night, dark but architecture and plants still legible. No additional objects, moon, text, stars over architecture, or people. Fountain stays the same shape and position and does not spray a new tall jet (water will be animated separately). Output a high quality landscape asset and make its saved file path available."
+    }
   ]
 }

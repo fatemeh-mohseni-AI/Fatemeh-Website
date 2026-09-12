@@ -14,7 +14,9 @@ test("the production worker renders the garden entrance and accessible controls"
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<title>Fatemeh Mohseni/);
-  assert.match(html, /Open the garden/);
+  assert.doesNotMatch(html, /Open the garden|Walk in 3D/);
+  assert.match(html, /Scroll or swipe up to open the door/);
+  assert.match(html, /press Enter to open the door/);
   assert.match(html, /Skip to room navigation/);
   assert.match(html, /Experience settings/);
   assert.match(html, /\/images\/door.webp/);

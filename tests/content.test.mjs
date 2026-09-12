@@ -59,6 +59,16 @@ test("all published collections are valid and reference available images", async
     "Half of the World",
   );
   assert.ok(locations.every((place) => place.images.length >= 3));
+  const travelImages = locations.flatMap((place) => place.images);
+  assert.equal(new Set(travelImages).size, travelImages.length);
+  for (const place of locations) {
+    assert.ok(place.images.every((src) => src.startsWith("/images/travel/")));
+    assert.equal(place.photoCredits.length, place.images.length);
+    for (const src of place.images) {
+      const credit = place.photoCredits.find((photo) => photo.src === src);
+      assert.ok(credit?.caption && credit.author && credit.license && credit.source);
+    }
+  }
   assert.ok(writings.every((a) => a.body.length));
   assert.ok(gallery.length);
   for (const image of gallery)

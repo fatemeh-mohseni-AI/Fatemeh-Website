@@ -34,7 +34,6 @@ import {
   X,
   Film,
   Code2,
-  Move,
   RotateCcw,
 } from "lucide-react";
 import {
@@ -48,6 +47,7 @@ import { discoveries, rooms, type RoomId } from "@/lib/garden/content";
 import { cinemaTransition, sceneTransitions } from "@/lib/garden/scene-transitions";
 import { SceneEnvironment, SceneTransition } from "./scene-transition";
 import { prepareSceneImage, useSceneTransition } from "./use-scene-transition";
+import { CourtyardArtwork } from "./courtyard-artwork";
 const loadRoom = () => import("./rooms");
 const Room = lazy(loadRoom);
 const SpatialGarden = lazy(() => import("./spatial-garden"));
@@ -502,11 +502,10 @@ export default function Garden() {
                 transform: `translate3d(${camera.x}px,${camera.y}px,0) scale(${1.06 + camera.z - 1})`,
               }}
             >
-              <img
-                className="scene-image"
-                src="/images/courtyard.webp"
-                alt="A sunlit Persian courtyard with Orosi windows, orange trees, and a turquoise reflecting pool"
-                fetchPriority="high"
+              <CourtyardArtwork
+                enabled={entered && room === "courtyard" && !modal && !entry.request}
+                reduced={reduced}
+                onDiscover={() => discover("secret")}
               />
               <div className="scene-shade" />
               <div className="hotspots">
@@ -578,10 +577,6 @@ export default function Garden() {
           <span lang="fa">خوش آمدید</span>
         </div>
         <div className="exploration-tools">
-          <button className="pill-button" onClick={() => setSpatial((v) => !v)}>
-            <Move size={16} />
-            {spatial ? "Cinematic view" : "Walk in 3D"}
-          </button>
           {!spatial && (
             <button
               className="icon-button"
@@ -639,7 +634,14 @@ export default function Garden() {
       {!entered && (
         <section
           className="entrance"
-          aria-label="Entrance to Fatemeh’s digital garden"
+          aria-label="Entrance to Fatemeh’s digital garden. Scroll, swipe up, or press Enter to open the door."
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.target === event.currentTarget && ["Enter", " ", "ArrowDown"].includes(event.key)) {
+              event.preventDefault();
+              enter();
+            }
+          }}
           onTouchStart={(e) => {
             initialTouch.current = e.touches[0].clientY;
           }}
@@ -690,14 +692,9 @@ export default function Garden() {
             <span className="persian-welcome" lang="fa" dir="rtl">
               به دنیای من خوش آمدید
             </span>
-            <button className="enter-button" onClick={enter}>
-              Open the garden <ArrowRight size={18} />
-            </button>
             <span className="scroll-cue">
               <ArrowDown size={14} />{" "}
-              {reduced
-                ? "Enter at your own pace"
-                : "or scroll to open the door"}
+              Scroll or swipe up to open the door
             </span>
             <div
               className="door-progress"
