@@ -92,34 +92,41 @@ function FountainOverlay({ cover, enabled, reduced, onDiscover }: {
               </linearGradient>
             </defs>
             <g fill="none" stroke="url(#fountain-stream)" strokeLinecap="round">
-              <path className="fountain-jet" d="M837 621 Q833 566 828 601 Q821 627 810 662 M837 621 Q840 574 844 605 Q851 636 864 662" strokeWidth="1.5" />
-              <path className="fountain-jet fountain-jet--fine" d="M837 621 Q835 565 835 596 M837 621 Q847 593 855 625 L870 661 M837 621 Q824 592 819 625 L803 661" strokeWidth=".8" />
-              {Array.from({ length: 19 }, (_, i) => {
-                const x = 801 + i * 4;
-                const outward = (x - 837) * 0.22;
+              <path
+                className="fountain-jet"
+                d="M837 621 Q827 500 804 575 Q787 625 767 663 M837 621 Q848 503 870 578 Q886 629 907 663"
+                strokeWidth="2.2"
+              />
+              <path
+                className="fountain-jet fountain-jet--fine"
+                d="M837 621 Q836 488 836 565 M837 621 Q859 547 878 605 L900 663 M837 621 Q814 545 795 604 L773 663"
+                strokeWidth="1.15"
+              />
+              {Array.from({ length: 23 }, (_, i) => {
+                const x = 789 + i * 4.4;
+                const outward = (x - 837) * 0.26;
                 return <path key={i} className="fountain-fall"
-                  style={{ "--stream-delay": `${-i * 0.071}s` } as CSSProperties}
-                  d={`M${x} ${666 + Math.sin(i / 18 * Math.PI) * 3} Q${x + outward} 680 ${x + outward * 1.4} ${694 + Math.sin(i * 2) * 3}`}
-                  strokeWidth={i % 3 === 0 ? 1.5 : 0.8} />;
+                  style={{ "--stream-delay": `${-i * 0.061}s` } as CSSProperties}
+                  d={`M${x} ${663 + Math.sin(i / 22 * Math.PI) * 3.4} Q${x + outward} 682 ${x + outward * 1.55} ${704 + Math.sin(i * 2) * 3.5}`}
+                  strokeWidth={i % 3 === 0 ? 1.8 : 1} />;
               })}
             </g>
-            <g fill="none" stroke="#d7f4ed" strokeWidth=".7">
-              {[0, 1, 2].map((i) => <ellipse key={i} className="fountain-ripple" cx="837" cy="696" rx="47" ry="7"
+            <g fill="none" stroke="#d7f4ed" strokeWidth=".8">
+              {[0, 1, 2].map((i) => <ellipse key={i} className="fountain-ripple" cx="837" cy="706" rx="62" ry="9"
                 style={{ animationDelay: `${-i * 0.9}s` }} />)}
             </g>
             <g fill="#e9ffff">
-              {Array.from({ length: 14 }, (_, i) => <circle key={i} className="fountain-droplet"
-                cx={802 + i * 5.4} cy={690 + Math.sin(i * 8) * 3} r={i % 3 === 0 ? 1 : 0.65}
-                style={{ animationDelay: `${-i * 0.13}s` }} />)}
+              {Array.from({ length: 18 }, (_, i) => <circle key={i} className="fountain-droplet"
+                cx={790 + i * 5.5} cy={700 + Math.sin(i * 8) * 4} r={i % 3 === 0 ? 1.2 : 0.75}
+                style={{ animationDelay: `${-i * 0.11}s` }} />)}
             </g>
           </svg>
           <button
             type="button"
             className="fountain-hotspot"
-            style={{ width: Math.max(44, 110 * cover.scale), height: Math.max(44, 115 * cover.scale) }}
+            style={{ width: Math.max(44, 128 * cover.scale), height: Math.max(44, 138 * cover.scale) }}
             aria-label="Courtyard fountain"
             aria-pressed={active}
-            title="Hover to wake the fountain · tap to toggle"
             disabled={!enabled}
             onPointerDown={(event) => { lastPointer.current = event.pointerType; }}
             onPointerEnter={(event) => { if (event.pointerType === "mouse") setHovered(true); }}
