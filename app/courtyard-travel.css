@@ -2,6 +2,220 @@
 .courtyard-artwork { position: absolute; inset: 0; pointer-events: none; }
 .courtyard-night { position: absolute; inset: 0; opacity: 0; transition: opacity 1.8s ease; }
 .courtyard-night.is-loaded { opacity: 1; }
+
+/* Quiet ambient motion: breathing lanterns, foliage, dust/fireflies, and rare birds. */
+.courtyard-atmosphere {
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
+}
+.courtyard-atmosphere:not(.is-enabled) * { animation-play-state: paused !important; }
+
+.courtyard-lantern-layer,
+.courtyard-particles {
+  position: absolute;
+  inset: 0;
+}
+.courtyard-lantern-glow {
+  position: absolute;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #ffe4a8aa 0 4%, #eab96955 14%, #cc8b3228 34%, transparent 68%);
+  mix-blend-mode: screen;
+  filter: blur(8px) brightness(.95);
+  opacity: .045;
+  animation: courtyard-lantern-breathe 7s ease-in-out infinite;
+  will-change: transform, filter;
+}
+.courtyard-artwork[data-time="sunset"] .courtyard-lantern-glow {
+  opacity: .16;
+}
+.courtyard-artwork[data-time="night"] .courtyard-lantern-glow {
+  opacity: .31;
+}
+@keyframes courtyard-lantern-breathe {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(.94);
+    filter: blur(8px) brightness(.9);
+  }
+  44% {
+    transform: translate(-50%, -50%) scale(1.07);
+    filter: blur(10px) brightness(1.18);
+  }
+  68% {
+    transform: translate(-50%, -50%) scale(1.01);
+    filter: blur(9px) brightness(1.03);
+  }
+}
+
+.courtyard-leaf-cluster {
+  position: absolute;
+  overflow: visible;
+  fill: #173822;
+  stroke: #142f1e;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: .16;
+  filter: blur(.15px) drop-shadow(0 3px 5px #07150c40);
+  mix-blend-mode: multiply;
+  will-change: transform;
+}
+.courtyard-leaf-cluster--left {
+  left: -1.2%;
+  top: 7.5%;
+  width: 16.5%;
+  transform-origin: 7% 92%;
+  animation: courtyard-leaf-sway-left 10.5s ease-in-out infinite alternate;
+}
+.courtyard-leaf-cluster--right {
+  right: -1.8%;
+  top: 8.5%;
+  width: 18.5%;
+  transform-origin: 94% 92%;
+  animation: courtyard-leaf-sway-right 12.5s ease-in-out -4s infinite alternate;
+}
+.courtyard-artwork[data-time="sunset"] .courtyard-leaf-cluster {
+  opacity: .18;
+  fill: #18341f;
+}
+.courtyard-artwork[data-time="night"] .courtyard-leaf-cluster {
+  opacity: .22;
+  fill: #071b12;
+  stroke: #0c2116;
+}
+@keyframes courtyard-leaf-sway-left {
+  from { transform: rotate(-.35deg) translate3d(-1px, 0, 0); }
+  to { transform: rotate(1.05deg) translate3d(4px, 2px, 0); }
+}
+@keyframes courtyard-leaf-sway-right {
+  from { transform: rotate(.3deg) translate3d(1px, 0, 0); }
+  to { transform: rotate(-.9deg) translate3d(-4px, 2px, 0); }
+}
+
+.courtyard-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff0c9;
+  box-shadow: 0 0 5px #e7c98635;
+  opacity: 0;
+  animation-name: courtyard-dust-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+.courtyard-artwork[data-time="sunset"] .courtyard-particle {
+  background: #ffe2a6;
+  box-shadow: 0 0 7px #e7ac5c55;
+}
+.courtyard-artwork[data-time="night"] .courtyard-particle {
+  width: 2.2px !important;
+  height: 2.2px !important;
+  background: #e9dc88;
+  box-shadow: 0 0 4px #f0d96e, 0 0 10px #b9ca6a8f;
+  animation-name: courtyard-firefly-drift;
+}
+@keyframes courtyard-dust-drift {
+  0%, 100% {
+    transform: translate3d(0, 18px, 0) scale(.8);
+    opacity: 0;
+  }
+  18% { opacity: .08; }
+  52% {
+    transform: translate3d(calc(var(--particle-drift) * .52), -7px, 0) scale(1);
+    opacity: .2;
+  }
+  82% { opacity: .07; }
+  100% {
+    transform: translate3d(var(--particle-drift), -36px, 0) scale(.86);
+    opacity: 0;
+  }
+}
+@keyframes courtyard-firefly-drift {
+  0%, 100% {
+    transform: translate3d(0, 10px, 0) scale(.75);
+    opacity: .04;
+  }
+  24% { opacity: .18; }
+  43% {
+    transform: translate3d(calc(var(--particle-drift) * .44), -4px, 0) scale(1.15);
+    opacity: .52;
+  }
+  58% { opacity: .14; }
+  74% {
+    transform: translate3d(calc(var(--particle-drift) * .76), -18px, 0) scale(.9);
+    opacity: .34;
+  }
+  100% {
+    transform: translate3d(var(--particle-drift), -31px, 0) scale(.7);
+    opacity: .03;
+  }
+}
+
+.courtyard-bird-pass {
+  position: absolute;
+  left: -11%;
+  top: 17%;
+  width: 9.5%;
+  height: 8%;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.courtyard-bird-pass.is-active {
+  animation: courtyard-bird-cross 7.6s cubic-bezier(.25, .48, .36, .96) forwards;
+}
+.courtyard-distant-bird {
+  position: absolute;
+  width: 42%;
+  fill: #15251e;
+  opacity: .55;
+  filter: blur(.15px);
+  transform-origin: 50% 55%;
+  animation: courtyard-bird-flutter 1.15s ease-in-out infinite alternate;
+}
+.courtyard-distant-bird--one {
+  left: 4%;
+  top: 2%;
+}
+.courtyard-distant-bird--two {
+  left: 48%;
+  top: 34%;
+  width: 31%;
+  opacity: .42;
+  animation-delay: -.48s;
+  animation-duration: 1.35s;
+}
+.courtyard-artwork[data-time="night"] .courtyard-distant-bird {
+  fill: #050b08;
+  opacity: .38;
+}
+@keyframes courtyard-bird-cross {
+  0% {
+    transform: translate3d(0, 8px, 0) scale(.82);
+    opacity: 0;
+  }
+  8% { opacity: .26; }
+  42% {
+    transform: translate3d(520%, -14px, 0) scale(.94);
+    opacity: .34;
+  }
+  72% {
+    transform: translate3d(850%, -4px, 0) scale(1);
+    opacity: .27;
+  }
+  100% {
+    transform: translate3d(1190%, 8px, 0) scale(1.04);
+    opacity: 0;
+  }
+}
+@keyframes courtyard-bird-flutter {
+  from { transform: rotate(-2deg) scaleY(.88); }
+  to { transform: rotate(1.5deg) scaleY(1.06); }
+}
+
+/* Fountain: SVG water is registered to the source photograph. */
 .fountain-registration { position: absolute; pointer-events: none; }
 .fountain-water { width: 100%; height: 100%; overflow: visible; opacity: 0; transition: opacity .45s ease; }
 .fountain-water.is-flowing { opacity: 1; }
@@ -44,8 +258,25 @@
 .travel-photo-link:focus-visible { outline: 2px solid #d4b77d; outline-offset: -2px; }
 .travel-photo-link img { transition: transform .4s ease; }
 .travel-photo-link:hover img { transform: scale(1.025); }
+
 @media (prefers-reduced-motion: reduce) {
-  .courtyard-night, .fountain-water, .travel-photo-link img { transition: none; }
+  .courtyard-night,
+  .fountain-water,
+  .travel-photo-link img { transition: none; }
   .fountain-water * { animation: none; }
+  .courtyard-lantern-glow,
+  .courtyard-leaf-cluster { animation: none; }
+  .courtyard-particle,
+  .courtyard-bird-pass { display: none; }
 }
-.reduced-motion .courtyard-night, .reduced-motion .fountain-water, .reduced-motion .travel-photo-link img { transition: none; }
+.reduced-motion .courtyard-night,
+.reduced-motion .fountain-water,
+.reduced-motion .travel-photo-link img { transition: none; }
+.reduced-motion .courtyard-lantern-glow,
+.reduced-motion .courtyard-leaf-cluster,
+.courtyard-atmosphere.is-reduced .courtyard-lantern-glow,
+.courtyard-atmosphere.is-reduced .courtyard-leaf-cluster { animation: none; }
+.reduced-motion .courtyard-particle,
+.reduced-motion .courtyard-bird-pass,
+.courtyard-atmosphere.is-reduced .courtyard-particle,
+.courtyard-atmosphere.is-reduced .courtyard-bird-pass { display: none; }
