@@ -1,0 +1,36 @@
+/* About is intentionally not a Radix dialog anymore. Keep its portal viewport-bound. */
+.about-fatemeh-v2 {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  isolation: isolate;
+  transform: none !important;
+  background: #081813 !important;
+}
+
+.about-fatemeh-v2 .about-v2-backdrop,
+.about-fatemeh-v2 .about-v2-pattern {
+  position: absolute;
+  inset: 0;
+}
+
+body:has(.about-fatemeh-v2) {
+  overflow: hidden !important;
+}
+
+body:has(.about-fatemeh-v2) .garden-global-nav {
+  visibility: hidden;
+}
