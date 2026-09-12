@@ -51,48 +51,86 @@
   }
 }
 
+/* Foliage is intentionally more visible than the first pass. The whole branch
+   sways slowly while the leaf group has a smaller secondary rustle, so motion
+   reads clearly without looking like a looping sticker. */
 .courtyard-leaf-cluster {
   position: absolute;
   overflow: visible;
-  fill: #173822;
-  stroke: #142f1e;
-  stroke-width: 1.4;
+  fill: #214c2e;
+  stroke: #173a24;
+  stroke-width: 1.55;
   stroke-linecap: round;
-  opacity: .16;
-  filter: blur(.15px) drop-shadow(0 3px 5px #07150c40);
-  mix-blend-mode: multiply;
+  opacity: .44;
+  filter: drop-shadow(0 3px 7px #06130b70);
   will-change: transform;
+  transform-box: fill-box;
 }
 .courtyard-leaf-cluster--left {
-  left: -1.2%;
-  top: 7.5%;
-  width: 16.5%;
+  left: -2.4%;
+  top: 5.2%;
+  width: 20.5%;
   transform-origin: 7% 92%;
-  animation: courtyard-leaf-sway-left 10.5s ease-in-out infinite alternate;
+  animation: courtyard-leaf-sway-left 6.2s cubic-bezier(.42, 0, .31, 1) infinite alternate;
 }
 .courtyard-leaf-cluster--right {
-  right: -1.8%;
-  top: 8.5%;
-  width: 18.5%;
+  right: -3%;
+  top: 5.8%;
+  width: 22.5%;
   transform-origin: 94% 92%;
-  animation: courtyard-leaf-sway-right 12.5s ease-in-out -4s infinite alternate;
+  animation: courtyard-leaf-sway-right 7.4s cubic-bezier(.38, 0, .29, 1) -2.6s infinite alternate;
+}
+.courtyard-leaves {
+  transform-box: fill-box;
+  transform-origin: 50% 78%;
+  animation: courtyard-leaf-rustle 3.7s ease-in-out infinite alternate;
+}
+.courtyard-leaf-cluster--right .courtyard-leaves {
+  animation-delay: -1.9s;
+  animation-duration: 4.3s;
+}
+.courtyard-branch {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: .8;
 }
 .courtyard-artwork[data-time="sunset"] .courtyard-leaf-cluster {
-  opacity: .18;
-  fill: #18341f;
+  opacity: .48;
+  fill: #24472a;
+  stroke: #18351f;
 }
 .courtyard-artwork[data-time="night"] .courtyard-leaf-cluster {
-  opacity: .22;
-  fill: #071b12;
-  stroke: #0c2116;
+  opacity: .52;
+  fill: #0d2818;
+  stroke: #102c1c;
+  filter: drop-shadow(0 3px 8px #0009);
 }
 @keyframes courtyard-leaf-sway-left {
-  from { transform: rotate(-.35deg) translate3d(-1px, 0, 0); }
-  to { transform: rotate(1.05deg) translate3d(4px, 2px, 0); }
+  0% {
+    transform: rotate(-1.4deg) translate3d(-3px, 0, 0) scale(1);
+  }
+  45% {
+    transform: rotate(.45deg) translate3d(4px, -1px, 0) scale(1.006);
+  }
+  100% {
+    transform: rotate(2.25deg) translate3d(11px, 4px, 0) scale(1.012);
+  }
 }
 @keyframes courtyard-leaf-sway-right {
-  from { transform: rotate(.3deg) translate3d(1px, 0, 0); }
-  to { transform: rotate(-.9deg) translate3d(-4px, 2px, 0); }
+  0% {
+    transform: rotate(1.25deg) translate3d(3px, 0, 0) scale(1);
+  }
+  48% {
+    transform: rotate(-.35deg) translate3d(-4px, -1px, 0) scale(1.006);
+  }
+  100% {
+    transform: rotate(-2.1deg) translate3d(-12px, 4px, 0) scale(1.012);
+  }
+}
+@keyframes courtyard-leaf-rustle {
+  0% { transform: rotate(-.55deg) translate3d(-1px, 0, 0); }
+  55% { transform: rotate(.35deg) translate3d(1px, -1px, 0); }
+  100% { transform: rotate(1.05deg) translate3d(2px, 1px, 0); }
 }
 
 .courtyard-particle {
@@ -265,7 +303,8 @@
   .travel-photo-link img { transition: none; }
   .fountain-water * { animation: none; }
   .courtyard-lantern-glow,
-  .courtyard-leaf-cluster { animation: none; }
+  .courtyard-leaf-cluster,
+  .courtyard-leaves { animation: none; }
   .courtyard-particle,
   .courtyard-bird-pass { display: none; }
 }
@@ -274,8 +313,10 @@
 .reduced-motion .travel-photo-link img { transition: none; }
 .reduced-motion .courtyard-lantern-glow,
 .reduced-motion .courtyard-leaf-cluster,
+.reduced-motion .courtyard-leaves,
 .courtyard-atmosphere.is-reduced .courtyard-lantern-glow,
-.courtyard-atmosphere.is-reduced .courtyard-leaf-cluster { animation: none; }
+.courtyard-atmosphere.is-reduced .courtyard-leaf-cluster,
+.courtyard-atmosphere.is-reduced .courtyard-leaves { animation: none; }
 .reduced-motion .courtyard-particle,
 .reduced-motion .courtyard-bird-pass,
 .courtyard-atmosphere.is-reduced .courtyard-particle,
