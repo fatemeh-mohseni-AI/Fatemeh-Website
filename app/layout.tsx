@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { GlobalGardenNav } from "@/components/garden/global-garden-nav";
 import "./globals.css";
 import "./cinema-transition.css";
 import "./library-book.css";
 import "./courtyard-travel.css";
+import "./anonymous-letters.css";
 
 export const metadata: Metadata = {
   title: "Fatemeh Mohseni — A Little World of My Own",
@@ -21,7 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <GlobalGardenNav />
+      </body>
     </html>
   );
 }
