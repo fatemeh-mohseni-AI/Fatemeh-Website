@@ -6,8 +6,9 @@ import { ArrowLeft, X } from "lucide-react";
 import { InkAndQuillIcon } from "./anonymous-letter";
 
 const DELIVERY_KEY = "fatemeh-about-bird-delivered-v3";
-const FLIGHT_DURATION_MS = 3900;
-const DROP_AT_MS = 2700;
+const FLIGHT_DURATION_MS = 6800;
+const DROP_AT_MS = 4400;
+const FLIGHT_START_DELAY_MS = 640;
 
 type CourierState = {
   birdActive: boolean;
@@ -84,11 +85,85 @@ function HoopoeCourier({
           <path d="M119 24 112 5" />
           <path d="M140 24 154 8" />
         </g>
-        <path className="bird-v2-wing bird-v2-wing-upper" d="M65 55c12-27 42-38 65-22-20 5-35 17-48 36" />
-        <path className="bird-v2-wing bird-v2-wing-lower" d="M65 63c22 8 43 4 62-12-7 27-36 42-59 29" />
+        <path
+          className="bird-v2-wing bird-v2-wing-upper"
+          d="M65 55c12-27 42-38 65-22-20 5-35 17-48 36"
+          style={{ animationDuration: ".44s", animationTimingFunction: "ease-in-out" }}
+        />
+        <path
+          className="bird-v2-wing bird-v2-wing-lower"
+          d="M65 63c22 8 43 4 62-12-7 27-36 42-59 29"
+          style={{
+            animationDuration: ".44s",
+            animationDelay: "-.22s",
+            animationTimingFunction: "ease-in-out",
+          }}
+        />
         <path className="bird-v2-stripe" d="M74 73c16 5 30 4 44-2M85 78c12 2 22 1 32-3" />
       </svg>
       <CourierEnvelope released={released} />
+    </div>
+  );
+}
+
+function AboutLetterArtwork() {
+  return (
+    <div
+      className="about-v2-orosi-frame"
+      style={{
+        width: "min(390px, 100%)",
+        aspectRatio: "16 / 10",
+        borderRadius: "30% 30% 5% 5% / 17% 17% 5% 5%",
+        background: "#0b1d17",
+        boxShadow: "inset 0 0 70px #d3ad6b10, 0 34px 70px #0007",
+      }}
+    >
+      <img
+        src="/images/about-fatemeh-letter.webp"
+        alt=""
+        width={448}
+        height={252}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        draggable={false}
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          display: "block",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          filter: "saturate(.92) brightness(.91) contrast(1.035)",
+        }}
+      />
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 2,
+          pointerEvents: "none",
+          background:
+            "linear-gradient(180deg, rgba(3, 14, 11, .05), rgba(3, 14, 11, .22)), radial-gradient(circle at 67% 58%, rgba(220, 177, 102, .10), transparent 48%)",
+          boxShadow: "inset 0 0 55px rgba(2, 11, 9, .55)",
+        }}
+      />
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 14,
+          zIndex: 3,
+          pointerEvents: "none",
+          border: "1px solid rgba(220, 185, 121, .34)",
+          borderRadius: "24% 24% 3% 3% / 15% 15% 3% 3%",
+          boxShadow: "0 0 24px rgba(216, 177, 107, .07)",
+        }}
+      />
+      <div className="about-v2-orosi-glow" style={{ zIndex: 3 }} />
     </div>
   );
 }
@@ -230,52 +305,79 @@ export function AboutFatemeh({
       const targetRect = target.getBoundingClientRect();
       const targetX = targetRect.left + targetRect.width / 2 - 88;
       const targetY = targetRect.top + targetRect.height / 2 - 54;
-      const startY = Math.max(112, Math.min(window.innerHeight * 0.24, 210));
-      const firstArcY = Math.min(window.innerHeight * 0.38, startY + 125);
-      const approachY = Math.max(72, targetY + 72);
-      const exitY = Math.max(44, targetY - 145);
+      const startY = Math.max(104, Math.min(window.innerHeight * 0.2, 184));
+      const sweepY = Math.min(window.innerHeight * 0.36, startY + 112);
+      const approachY = Math.max(72, targetY + 100);
+      const exitY = Math.max(44, targetY - 118);
+      const cruiseX = Math.max(
+        72,
+        Math.min(targetX * 0.46, window.innerWidth * 0.38),
+      );
+      const approachX = Math.max(
+        cruiseX + 68,
+        targetX - Math.min(220, window.innerWidth * 0.18),
+      );
+      const preDeliveryX = targetX - Math.min(78, window.innerWidth * 0.06);
 
       animationRef.current = bird.animate(
         [
           {
-            transform: `translate3d(-210px, ${startY}px, 0) rotate(-4deg)`,
+            transform: `translate3d(-220px, ${startY}px, 0) rotate(-3deg)`,
             opacity: 0,
             offset: 0,
+            easing: "cubic-bezier(.3,.05,.35,1)",
           },
           {
-            transform: `translate3d(-80px, ${startY - 10}px, 0) rotate(-2deg)`,
+            transform: `translate3d(-72px, ${startY - 12}px, 0) rotate(-1.5deg)`,
             opacity: 1,
-            offset: 0.07,
+            offset: 0.08,
+            easing: "cubic-bezier(.22,.62,.28,1)",
           },
           {
-            transform: `translate3d(${Math.max(160, window.innerWidth * 0.33)}px, ${firstArcY}px, 0) rotate(5deg)`,
+            transform: `translate3d(${cruiseX}px, ${sweepY}px, 0) rotate(3.5deg)`,
             opacity: 1,
-            offset: 0.34,
+            offset: 0.31,
+            easing: "cubic-bezier(.28,.56,.32,1)",
           },
           {
-            transform: `translate3d(${Math.max(260, targetX - 190)}px, ${approachY}px, 0) rotate(-4deg)`,
+            transform: `translate3d(${approachX}px, ${approachY}px, 0) rotate(-2.5deg)`,
             opacity: 1,
-            offset: 0.58,
+            offset: 0.5,
+            easing: "cubic-bezier(.24,.7,.28,1)",
+          },
+          {
+            transform: `translate3d(${preDeliveryX}px, ${targetY + 26}px, 0) rotate(-1deg)`,
+            opacity: 1,
+            offset: 0.59,
+            easing: "cubic-bezier(.18,.72,.2,1)",
           },
           {
             transform: `translate3d(${targetX}px, ${targetY}px, 0) rotate(0deg)`,
             opacity: 1,
-            offset: 0.7,
+            offset: 0.65,
+            easing: "cubic-bezier(.16,.8,.2,1)",
           },
           {
-            transform: `translate3d(${targetX + 20}px, ${targetY - 8}px, 0) rotate(1deg)`,
+            transform: `translate3d(${targetX + 12}px, ${targetY - 7}px, 0) rotate(.6deg)`,
             opacity: 1,
-            offset: 0.76,
+            offset: 0.73,
+            easing: "cubic-bezier(.35,0,.25,1)",
           },
           {
-            transform: `translate3d(${window.innerWidth + 210}px, ${exitY}px, 0) rotate(6deg)`,
-            opacity: 0.94,
+            transform: `translate3d(${targetX + 150}px, ${targetY - 66}px, 0) rotate(3deg)`,
+            opacity: 1,
+            offset: 0.82,
+            easing: "cubic-bezier(.2,.55,.28,1)",
+          },
+          {
+            transform: `translate3d(${window.innerWidth + 220}px, ${exitY}px, 0) rotate(5deg)`,
+            opacity: 0,
             offset: 1,
           },
         ],
         {
           duration: FLIGHT_DURATION_MS,
-          easing: "cubic-bezier(.18,.72,.2,1)",
+          easing: "linear",
           fill: "forwards",
         },
       );
@@ -291,10 +393,10 @@ export function AboutFatemeh({
         animationRef.current = null;
         setCourier((current) => ({ ...current, birdActive: false }));
         markDeliveredThisSession();
-      }, FLIGHT_DURATION_MS + 80);
+      }, FLIGHT_DURATION_MS + 120);
 
       timersRef.current.push(dropTimer, finishTimer);
-    }, 420);
+    }, FLIGHT_START_DELAY_MS);
 
     timersRef.current.push(startTimer);
 
@@ -385,13 +487,7 @@ export function AboutFatemeh({
         </div>
 
         <div className="about-v2-portrait-column" aria-hidden="true">
-          <div className="about-v2-orosi-frame">
-            <div className="about-v2-monogram">
-              <span>fm</span>
-              <small>فاطمه</small>
-            </div>
-            <div className="about-v2-orosi-glow" />
-          </div>
+          <AboutLetterArtwork />
           <p dir="ltr">ROOTS · CURIOSITY · POSSIBILITY</p>
         </div>
       </div>
