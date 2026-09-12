@@ -1,16 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { createPortal } from "react-dom";
 import { ArrowLeft, X } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { InkAndQuillIcon } from "./anonymous-letter";
 
-const DELIVERY_KEY = "fatemeh-about-bird-delivered-v2";
+const DELIVERY_KEY = "fatemeh-about-bird-delivered-v3";
 const FLIGHT_DURATION_MS = 3900;
 const DROP_AT_MS = 2700;
 
@@ -48,7 +43,7 @@ function markDeliveredThisSession() {
   try {
     sessionStorage.setItem(DELIVERY_KEY, "1");
   } catch {
-    // The animation is decorative; blocked session storage must not break About.
+    // The animation is decorative; blocked storage must not break About.
   }
 }
 
@@ -142,6 +137,8 @@ export function AboutFatemeh({
   onOpenChange: (open: boolean) => void;
   onOpenLetter: () => void;
 }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const birdRef = useRef<HTMLDivElement>(null);
   const targetRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<Animation | null>(null);
@@ -151,6 +148,51 @@ export function AboutFatemeh({
     released: false,
     delivered: false,
   });
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const frame = window.requestAnimationFrame(() => closeRef.current?.focus());
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onOpenChange(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const root = rootRef.current;
+      if (!root) return;
+      const focusable = Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.offsetParent !== null);
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousActive?.focus();
+    };
+  }, [open, onOpenChange]);
 
   useEffect(() => {
     if (!open) return;
@@ -240,11 +282,7 @@ export function AboutFatemeh({
 
       const dropTimer = window.setTimeout(() => {
         if (cancelled) return;
-        setCourier((current) => ({
-          ...current,
-          released: true,
-          delivered: true,
-        }));
+        setCourier((current) => ({ ...current, released: true, delivered: true }));
       }, DROP_AT_MS);
 
       const finishTimer = window.setTimeout(() => {
@@ -268,104 +306,102 @@ export function AboutFatemeh({
     };
   }, [open]);
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="about-fatemeh-v2"
-        showCloseButton={false}
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100dvh",
-          maxWidth: "none",
-          transform: "none",
-        }}
-      >
-        <div className="about-v2-backdrop" aria-hidden="true" />
-        <div className="about-v2-pattern" aria-hidden="true" />
+  if (!open || typeof document === "undefined") return null;
 
-        <div className="about-v2-topbar">
-          <button
-            type="button"
-            className="about-v2-close"
-            onClick={() => onOpenChange(false)}
-            aria-label="بستن درباره فاطمه"
-          >
-            <X size={18} />
-          </button>
+  return createPortal(
+    <div
+      ref={rootRef}
+      className="about-fatemeh-v2"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="about-fatemeh-title"
+      aria-describedby="about-fatemeh-description"
+    >
+      <div className="about-v2-backdrop" aria-hidden="true" />
+      <div className="about-v2-pattern" aria-hidden="true" />
 
-          <DeliveredLetterButton
-            targetRef={targetRef}
-            delivered={courier.delivered}
-            onClick={onOpenLetter}
-          />
-        </div>
+      <div className="about-v2-topbar">
+        <button
+          ref={closeRef}
+          type="button"
+          className="about-v2-close"
+          onClick={() => onOpenChange(false)}
+          aria-label="بستن درباره فاطمه"
+        >
+          <X size={18} />
+        </button>
 
-        <HoopoeCourier
-          birdRef={birdRef}
-          released={courier.released}
-          active={courier.birdActive}
+        <DeliveredLetterButton
+          targetRef={targetRef}
+          delivered={courier.delivered}
+          onClick={onOpenLetter}
         />
+      </div>
 
-        <div className="about-v2-content" dir="rtl">
-          <div className="about-v2-copy-column">
-            <div className="about-v2-kicker">
-              <span>درباره فاطمه</span>
-              <span className="about-v2-line" aria-hidden="true" />
-              <span dir="ltr">ABOUT THE PERSON BEHIND THE GARDEN</span>
-            </div>
+      <HoopoeCourier
+        birdRef={birdRef}
+        released={courier.released}
+        active={courier.birdActive}
+      />
 
-            <DialogTitle className="about-v2-title">
-              میان ریشه‌های قدیمی،
-              <br />
-              <em>و جهان‌های تازه.</em>
-            </DialogTitle>
-            <DialogDescription className="about-v2-description">
-              فاطمه محسنی · Fatemeh Mohseni
-            </DialogDescription>
-
-            <div className="about-v2-body-copy">
-              <p>
-                من فاطمه محسنی‌ام؛ مهندس نرم‌افزار و توسعه‌دهنده هوش مصنوعی، با
-                کنجکاوی‌ای که فقط به صفحه‌نمایش محدود نمی‌شود.
-              </p>
-              <p>
-                این باغ جایی برای تکنولوژی، هنر، سفر، سینما، کتاب‌ها و چیزهایی
-                است که در مسیر زندگی توجهم را می‌گیرند؛ فضایی برای ساختن، کشف
-                کردن و نزدیک ماندن به ریشه‌های ایرانی‌ام.
-              </p>
-            </div>
-
-            <div className="about-v2-identity" dir="ltr">
-              MAKER <span>·</span> TRAVELER <span>·</span> EXPLORER
-            </div>
-
-            <button className="about-v2-letter-cta" type="button" onClick={onOpenLetter}>
-              <InkAndQuillIcon />
-              <span>یک یادداشت برایم بگذار</span>
-              <ArrowLeft size={16} />
-            </button>
+      <div className="about-v2-content" dir="rtl">
+        <div className="about-v2-copy-column">
+          <div className="about-v2-kicker">
+            <span>درباره فاطمه</span>
+            <span className="about-v2-line" aria-hidden="true" />
+            <span dir="ltr">ABOUT THE PERSON BEHIND THE GARDEN</span>
           </div>
 
-          <div className="about-v2-portrait-column" aria-hidden="true">
-            <div className="about-v2-orosi-frame">
-              <div className="about-v2-monogram">
-                <span>fm</span>
-                <small>فاطمه</small>
-              </div>
-              <div className="about-v2-orosi-glow" />
-            </div>
-            <p dir="ltr">ROOTS · CURIOSITY · POSSIBILITY</p>
+          <h1 id="about-fatemeh-title" className="about-v2-title">
+            میان ریشه‌های قدیمی،
+            <br />
+            <em>و جهان‌های تازه.</em>
+          </h1>
+          <p id="about-fatemeh-description" className="about-v2-description">
+            فاطمه محسنی · Fatemeh Mohseni
+          </p>
+
+          <div className="about-v2-body-copy">
+            <p>
+              من فاطمه محسنی‌ام؛ مهندس نرم‌افزار و توسعه‌دهنده هوش مصنوعی، با
+              کنجکاوی‌ای که فقط به صفحه‌نمایش محدود نمی‌شود.
+            </p>
+            <p>
+              این باغ جایی برای تکنولوژی، هنر، سفر، سینما، کتاب‌ها و چیزهایی
+              است که در مسیر زندگی توجهم را می‌گیرند؛ فضایی برای ساختن، کشف
+              کردن و نزدیک ماندن به ریشه‌های ایرانی‌ام.
+            </p>
           </div>
+
+          <div className="about-v2-identity" dir="ltr">
+            MAKER <span>·</span> TRAVELER <span>·</span> EXPLORER
+          </div>
+
+          <button className="about-v2-letter-cta" type="button" onClick={onOpenLetter}>
+            <InkAndQuillIcon />
+            <span>یک یادداشت برایم بگذار</span>
+            <ArrowLeft size={16} />
+          </button>
         </div>
 
-        {!courier.delivered && !courier.birdActive && (
-          <span className="about-v2-delivery-status" role="status">
-            یک مهمان کوچک در راه است…
-          </span>
-        )}
-      </DialogContent>
-    </Dialog>
+        <div className="about-v2-portrait-column" aria-hidden="true">
+          <div className="about-v2-orosi-frame">
+            <div className="about-v2-monogram">
+              <span>fm</span>
+              <small>فاطمه</small>
+            </div>
+            <div className="about-v2-orosi-glow" />
+          </div>
+          <p dir="ltr">ROOTS · CURIOSITY · POSSIBILITY</p>
+        </div>
+      </div>
+
+      {!courier.delivered && !courier.birdActive && (
+        <span className="about-v2-delivery-status" role="status">
+          یک مهمان کوچک در راه است…
+        </span>
+      )}
+    </div>,
+    document.body,
   );
 }
