@@ -64,12 +64,18 @@ function CourierEnvelope({ released }: { released: boolean }) {
 function HoopoeCourier({
   birdRef,
   released,
+  active,
 }: {
   birdRef: RefObject<HTMLDivElement | null>;
   released: boolean;
+  active: boolean;
 }) {
   return (
-    <div ref={birdRef} className="about-courier-v2" aria-hidden="true">
+    <div
+      ref={birdRef}
+      className={`about-courier-v2 ${active ? "is-active" : ""}`}
+      aria-hidden="true"
+    >
       <svg className="hoopoe-bird-v2" viewBox="0 0 180 108" fill="none">
         <ellipse className="bird-shadow" cx="83" cy="82" rx="46" ry="8" />
         <path className="bird-v2-tail" d="M54 60 12 51l35 22M55 67 18 82l39-7" />
@@ -243,6 +249,8 @@ export function AboutFatemeh({
 
       const finishTimer = window.setTimeout(() => {
         if (cancelled) return;
+        animationRef.current?.cancel();
+        animationRef.current = null;
         setCourier((current) => ({ ...current, birdActive: false }));
         markDeliveredThisSession();
       }, FLIGHT_DURATION_MS + 80);
@@ -294,7 +302,11 @@ export function AboutFatemeh({
           />
         </div>
 
-        <HoopoeCourier birdRef={birdRef} released={courier.released} />
+        <HoopoeCourier
+          birdRef={birdRef}
+          released={courier.released}
+          active={courier.birdActive}
+        />
 
         <div className="about-v2-content" dir="rtl">
           <div className="about-v2-copy-column">
