@@ -1,4 +1,10 @@
 import Garden from "@/components/garden/garden";
+
 export default function Home() {
-  return <Garden />;
+  return (
+    <>
+      <style>{`.entrance-copy { display: none !important; }`}</style>
+      <Garden />
+    </>
+  );
 }
