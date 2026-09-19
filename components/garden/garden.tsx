@@ -400,8 +400,14 @@ export default function Garden() {
       <div className="garden-content-shell" inert={!!entry.request} aria-busy={!!entry.request}>
       <a
         className="skip-link"
-        href="#room-navigation"
-        onClick={() => setEntered(true)}
+        href={room === "gallery" ? "#gallery-exploration" : "#room-navigation"}
+        onClick={(event) => {
+          setEntered(true);
+          if (room === "gallery") {
+            event.preventDefault();
+            document.getElementById("gallery-exploration")?.focus();
+          }
+        }}
       >
         Skip to room navigation
       </a>
@@ -616,12 +622,12 @@ export default function Garden() {
 
       {entered && room !== "courtyard" && (
         <section key={room} className="room-content" aria-label={current.name}>
-          <div className="room-topline">
+          {room !== "gallery" && <div className="room-topline">
             <button className="quiet-link" onClick={() => goTo("courtyard")}>
               <ArrowLeft size={17} /> Back to the courtyard
             </button>
             <span lang="fa">{current.persian}</span>
-          </div>
+          </div>}
           <Suspense
             fallback={
               <div className="scene-loading">
@@ -734,7 +740,7 @@ export default function Garden() {
         </section>
       )}
 
-      {entered && (
+      {entered && room !== "gallery" && (
         <>
           <nav
             className="room-dock"

@@ -47,17 +47,18 @@ export function relatedMemory(items: Memory[], current: Memory, kind: Connection
   )[0] ?? null;
 }
 
-export type MemoryBay = { id: string; kind: "hero" | "wall" | "alcove" | "corner" | "doorway"; items: Memory[] };
+/** Stable wall groups; changing attention never changes their order or membership. */
+export type MemoryBay = { id: string; kind: "hero" | "alcove" | "doorway"; items: Memory[] };
 export function curateBays(items: Memory[]): MemoryBay[] {
   if (!items.length) return [];
   const hero = items.find((item) => item.featured) ?? items[0];
-  const rest = items.filter((item) => item.id !== hero.id);
-  const bays: MemoryBay[] = [{ id: "hero", kind: "hero", items: [hero] }];
-  const kinds = ["wall", "alcove", "corner", "doorway"] as const;
-  for (let i = 0; i < rest.length; i += 2) {
-    bays.push({ id: `wall-${i / 2 + 1}`, kind: kinds[(i / 2) % kinds.length], items: rest.slice(i, i + 2) });
+  const ordered = [hero, ...items.filter((item) => item.id !== hero.id)];
+  const kinds = ["hero", "alcove", "doorway"] as const;
+  const result: MemoryBay[] = [];
+  for (let i = 0; i < ordered.length; i += 4) {
+    result.push({ id: `room-${i / 4}`, kind: kinds[(i / 4) % kinds.length], items: ordered.slice(i, i + 4) });
   }
-  return bays;
+  return result;
 }
 
 export type GalleryPhase = "idle" | "travelling" | "opening" | "open" | "closing";
@@ -83,8 +84,8 @@ export type FrameBounds = { left: number; top: number; width: number; height: nu
 /** Project the original physical frame into the viewing area; never replace its DOM node. */
 export function focusFrame(source: FrameBounds, viewport: FrameBounds, mobile: boolean) {
   const area = mobile
-    ? { left: viewport.left + 20, top: viewport.top + 24, width: viewport.width - 40, height: viewport.height * .51 }
-    : { left: viewport.left + viewport.width * .05, top: viewport.top + 24, width: viewport.width * .61, height: viewport.height - 48 };
+    ? { left: viewport.left + 24, top: viewport.top + 88, width: viewport.width - 48, height: viewport.height * .39 }
+    : { left: viewport.left + viewport.width * .07, top: viewport.top + viewport.height * .16, width: viewport.width * .57, height: viewport.height * .67 };
   const scale = Math.max(.05, Math.min(area.width / Math.max(source.width, 1), area.height / Math.max(source.height, 1)));
   return `translate3d(${area.left + (area.width - source.width * scale) / 2 - source.left}px, ${area.top + (area.height - source.height * scale) / 2 - source.top}px, 0) scale(${scale})`;
 }

@@ -1,16 +1,25 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { Miniflare } from "miniflare";
+import { fileURLToPath } from "node:url";
 
-test("the production worker renders the garden entrance and accessible controls", async () => {
-  const { default: worker } = await import("../dist/server/index.js");
-  assert.equal(typeof worker.fetch, "function");
-  const response = await worker.fetch(
-    new Request("https://example.test/", { headers: { accept: "text/html" } }),
-    {
-      ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
-    },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
+test("the production worker renders the garden entrance and accessible controls", { timeout: 20_000 }, async (t) => {
+  // The built worker imports cloudflare:workers. Exercise it in workerd rather
+  // than Node's ESM loader, with isolated in-memory service/database bindings.
+  const worker = new Miniflare({
+    modules: true,
+    scriptPath: fileURLToPath(new URL("../dist/server/index.js", import.meta.url)),
+    modulesRoot: fileURLToPath(new URL("../dist/server", import.meta.url)),
+    modulesRules: [{ type: "ESModule", include: ["**/*.js"] }],
+    compatibilityDate: "2026-05-15",
+    compatibilityFlags: ["nodejs_compat"],
+    d1Databases: ["DB"],
+    serviceBindings: { ASSETS: async () => new Response("Not found", { status: 404 }) },
+  });
+  t.after(() => worker.dispose());
+  const response = await worker.dispatchFetch("https://example.test/", {
+    headers: { accept: "text/html" },
+  });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<title>Fatemeh Mohseni/);
