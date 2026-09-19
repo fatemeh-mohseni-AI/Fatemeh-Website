@@ -1236,135 +1236,6 @@ a svg {
   opacity: 0.7;
   padding: 25px 5px;
 }
-/* Framed art along a warm plaster wall. */
-.room-gallery .room-content {
-  background: radial-gradient(ellipse at 50% 20%, #f5efe2, #ded4c1);
-  color: #364431;
-}
-.room-gallery.has-entered .world-header {
-  background: linear-gradient(#ddd3bf, transparent);
-  color: #31402f;
-}
-.room-gallery.has-entered .brand > svg {
-  color: #7f653d;
-}
-.room-gallery.has-entered .text-button,
-.room-gallery.has-entered .header-center {
-  color: #43503c;
-}
-.room-gallery .room-topline {
-  color: #5f6b54;
-}
-.room-gallery .section-title .eyebrow {
-  color: #7b7055;
-}
-.room-gallery .section-title h1 em {
-  color: #75836a;
-}
-.room-gallery .world-footer {
-  color: #d9dec9;
-}
-.gallery-wall {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5%;
-  max-width: 1270px;
-  margin: 50px auto 0;
-  position: relative;
-}
-.gallery-frame {
-  display: block;
-  text-align: left;
-  width: 31%;
-  padding: 0;
-  transition: transform 0.4s;
-}
-.gallery-frame:hover {
-  transform: translateY(-6px);
-}
-.gallery-frame.frame-1 {
-  width: 25%;
-  margin-top: 60px;
-}
-.picture-mat {
-  display: block;
-  background: #f2eee5;
-  padding: 16px;
-  box-shadow:
-    0 14px 20px #5844282b,
-    0 1px 3px #0005;
-  border: 9px solid #65503a;
-  outline: 1px solid #90734d;
-}
-.frame-1 .picture-mat {
-  border-color: #302f23;
-}
-.picture-mat img {
-  width: 100%;
-  height: 240px;
-  object-fit: cover;
-}
-.frame-1 .picture-mat img {
-  height: 310px;
-}
-.picture-label {
-  display: flex;
-  gap: 11px;
-  margin-top: 22px;
-  align-items: flex-start;
-  padding-left: 5px;
-  font-size: 12px;
-  color: #7a7865;
-}
-.picture-label > span:first-child {
-  font-size: 12px;
-  padding-top: 4px;
-}
-.picture-label strong {
-  font-family: Georgia, serif;
-  font-size: 18px;
-  color: #33402f;
-  font-weight: 400;
-  display: block;
-}
-.picture-label > span > span {
-  display: block;
-  font-size: 12px;
-  margin-top: 5px;
-}
-.frame-open {
-  margin-left: auto;
-  color: #626b50;
-}
-.gallery-footnote {
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  opacity: 0.6;
-  margin-top: 65px;
-}
-.gallery-footnote > span {
-  font-family: Georgia, serif;
-  font-size: 34px;
-  border-right: 1px solid #a1967d;
-  padding-right: 22px;
-}
-.gallery-footnote p {
-  font-size: 12px;
-  text-align: left;
-}
-.room-gallery .room-dock {
-  background: #283b2fef;
-}
-.room-gallery .world-footer {
-  color: #394832;
-}
-.room-gallery .movement-hint {
-  color: #526046;
-}
 /* A quiet projection room. */
 .room-cinema .room-content {
   background: radial-gradient(ellipse at 50% 50%, #3a342b, #181f1c 75%);
@@ -1847,21 +1718,6 @@ a svg {
   font-size: 12px;
   color: #797d64;
 }
-.gallery-lightbox {
-  max-width: min(1180px, calc(100vw - 30px)) !important;
-  background: #13261f !important;
-  color: #efe4d0 !important;
-  border-color: #bfb18b44 !important;
-  padding: 30px !important;
-}
-.gallery-lightbox [data-slot="dialog-description"] {
-  color: #d4c6a8 !important;
-}
-.gallery-lightbox > img {
-  max-height: 58dvh;
-  object-fit: contain;
-  width: 100%;
-}
 .lightbox-controls {
   display: flex;
   justify-content: space-between;
@@ -1968,15 +1824,6 @@ a svg {
   }
   .globe-stage {
     height: 470px;
-  }
-  .picture-mat img {
-    height: 190px;
-  }
-  .frame-1 .picture-mat img {
-    height: 250px;
-  }
-  .gallery-wall {
-    gap: 4%;
   }
   .experiment-layout {
     gap: 35px;
@@ -2111,31 +1958,6 @@ a svg {
   }
   .library-content h1 {
     font-size: 59px;
-  }
-  .picture-mat {
-    padding: 10px;
-    border-width: 6px;
-  }
-  .picture-mat img {
-    height: 175px;
-  }
-  .frame-1 .picture-mat img {
-    height: 220px;
-  }
-  .picture-label strong {
-    font-size: 16px;
-  }
-  .picture-label > span > span {
-    font-size: 12px;
-  }
-  .gallery-wall {
-    gap: 3%;
-  }
-  .gallery-frame.frame-1 {
-    width: 29%;
-  }
-  .gallery-footnote {
-    margin-top: 40px;
   }
   .experiment-layout {
     gap: 27px;
@@ -2542,50 +2364,6 @@ a svg {
   .earth-credit {
     font-size: 12px;
   }
-  .gallery-wall {
-    flex-direction: column;
-    gap: 38px;
-    margin-top: 32px;
-  }
-  .gallery-frame,
-  .gallery-frame.frame-1 {
-    width: 90%;
-    max-width: 360px;
-    margin-top: 0;
-  }
-  .gallery-frame.frame-1 {
-    width: 77%;
-  }
-  .picture-mat {
-    padding: 14px;
-    border-width: 8px;
-  }
-  .picture-mat img {
-    height: 210px;
-  }
-  .frame-1 .picture-mat img {
-    height: 270px;
-  }
-  .picture-label {
-    margin-top: 15px;
-  }
-  .picture-label strong {
-    font-size: 19px;
-  }
-  .picture-label > span > span {
-    font-size: 12px;
-  }
-  .gallery-footnote {
-    margin-top: 39px;
-    gap: 14px;
-  }
-  .gallery-footnote p {
-    font-size: 12px;
-  }
-  .gallery-footnote > span {
-    font-size: 30px;
-    padding-right: 15px;
-  }
   .cinema-screen {
     height: 340px;
     border-width: 7px;
@@ -2711,9 +2489,6 @@ a svg {
   .reading-body {
     font-size: 17px;
     line-height: 1.9;
-  }
-  .gallery-lightbox {
-    padding: 24px 18px !important;
   }
   .lightbox-controls {
     align-items: flex-start;
@@ -3484,9 +3259,6 @@ a svg {
   .entrance-footer > span {
     font-size: 12px;
     letter-spacing: 0.04em;
-  }
-  .picture-label > span > span {
-    font-size: 12px;
   }
   .header-actions {
     gap: 3px;

@@ -32,7 +32,7 @@ test("curation puts the featured memory first and every other frame on exactly o
   const bays = curateBays(items);
   assert.equal(bays[0].items[0].featured, true);
   assert.equal(new Set(bays.flatMap((bay) => bay.items.map((item) => item.id))).size, items.length);
-  for (const kind of ["alcove", "corner", "doorway"]) assert.ok(bays.some((bay) => bay.kind === kind));
+  for (const kind of ["alcove", "doorway"]) assert.ok(bays.some((bay) => bay.kind === kind));
 });
 test("connections follow metadata, skip self and dangling IDs, and prefer unseen memories", () => {
   const current = items.find((item) => item.id === "afternoon");

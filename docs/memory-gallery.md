@@ -1,20 +1,18 @@
-# The Memory Gallery
+# The Memory Gallery — house rebuild
 
-The Gallery is a horizontal house corridor with cream plaster, walnut frames,
-restrained arches, brass lamps and a runner. A featured keepsake wall leads into
-paired walls, an alcove, a corner and a doorway. Category selection dims other
-photographs without changing frame positions. The selected frame itself moves
-forward and reverses to its original anchor; no replacement lightbox is mounted.
+The previous CSS museum corridor, drawn architecture, frame components, detail
+panel, navigation hook and Gallery styling have been removed. The replacement
+uses photographic architecture derived from the supplied reference, real walnut
+frame imagery, and independently rendered photographs. The site room dock is not
+rendered inside the Gallery. Other rooms keep their existing navigation.
 
-## Replace the sample photographs
+## Replace photographs
 
-1. Add compressed photographs to `public/gallery/`.
-2. Edit `public/data/gallery.json` (a JSON array). Keep IDs unique and stable.
-3. Set one photograph to `featured: true` to choose the keepsake wall. The first
-   featured entry wins; without one, the first photograph becomes featured.
-4. Run `npm run typecheck` and `npm test` before publishing.
+1. Add optimized WebP, AVIF, JPEG or PNG files to `public/gallery/`.
+2. Edit `public/data/gallery.json`. Keep each `id` unique and stable.
+3. Set one item to `featured: true` to select the first large frame.
 
-A complete example (replace file names with files you have actually added):
+Only `id` and `src` are required. All photo paths must be local. Example:
 
 ```json
 {
@@ -31,7 +29,7 @@ A complete example (replace file names with files you have actually added):
   "orientation": "landscape",
   "featured": true,
   "caption": "A small pause beside the water.",
-  "memory": "An optional longer memory, in your own words.",
+  "memory": "An optional memory, in your own words.",
   "color": "#9babb3",
   "position": [50, 40],
   "variants": [
@@ -45,67 +43,75 @@ A complete example (replace file names with files you have actually added):
 }
 ```
 
-Only `id` and `src` are required. Missing text gets restrained defaults; optional
-connections without matching memories are omitted. An empty collection displays
-a quiet welcome. Invalid JSON or metadata shows a retry action. An unavailable
-image leaves an accessible neutral frame with its title and metadata.
+Categories: `Places`, `People`, `Moments`, `Details`. Orientations: `landscape`,
+`portrait`, `square`. Wall views crop using the optional `position`; portrait
+artwork and all approached photos use `object-fit: contain`, never stretching.
+Supply compressed images around 1200–1800px on their longest edge; keep camera
+originals elsewhere. Smaller variants are optional. Titles and alt text have
+fallbacks. Empty, invalid, failed and missing-image states remain usable.
 
-- Categories: `Places`, `People`, `Moments`, `Details`.
-- Orientation: `landscape`, `portrait`, `square`; images are never stretched.
-  `position` is an optional `[horizontal, vertical]` crop position in percentages.
-  An approached photograph uses `contain` to reveal the whole photograph.
-- Related links match location, year or mood, preferring unvisited photographs.
-  Explicit `connections` and shared `tags` provide an additional thread.
-- Optional `onward.room`: `travel`, `cinema`, `library`.
-- Optional `credit` and HTTPS `source` preserve attribution for borrowed images.
-- The schema accepts up to 120 photographs. For a substantially larger archive,
-  add wall virtualization before increasing this limit.
+Related memories match place, year, feeling, explicit connections or shared tags.
+Missing matches are omitted. Links prefer unvisited memories. The trail remembers
+the last 12 unique visits during the current Gallery visit. Optional `credit`
+and HTTPS `source` preserve attribution. Temporary images retain their original
+credits; they are not represented as Fatemeh's personal photographs.
 
-Keep original camera files elsewhere; export web-sized images (roughly 1200–1800px
-on the long edge is a useful starting point) and optionally supply smaller
-`variants`. Only current/adjacent walls request eager loading; distant images
-use native lazy loading and asynchronous decoding. All gallery image paths are
-local. The sample content uses only assets that already existed in the project.
+## Structure
 
-## Interaction and architecture
+- `memory-gallery.tsx`: data, loading states, shared Tehran clock and motion preference.
+- `house-environment.tsx`: scene composition, keyboard interaction and focus containment.
+- `use-house-navigation.ts`: cancellable journeys, approach/retraction, resize, input cleanup.
+- `photo-frame.tsx`: persistent physical frame and responsive/local image loading.
+- `photo-focus.tsx`: editorial metadata and memory connections.
+- `house-wayfinding.tsx`: attention filters, trail and unobtrusive room controls.
+- `motion.ts`: retained bounded, abortable camera movement utility.
+- `lib/garden/memories.ts`: schema, relationships, stable four-photo room grouping,
+  bounded state and projection geometry. First featured image leads the collection.
+- `app/memory-gallery.css`: scoped photographic environment, mobile composition,
+  day/sunset/night grading, motion and focus states.
 
-- `components/garden/memory-gallery/`: environment, navigation hook, physical
-  frame, editorial details, category/trail/navigation controls, motion utility.
-- `lib/garden/memories.ts`: validated content, wall curation, relationships,
-  bounded history reducer, frame projection geometry.
-- `app/memory-gallery.css`: architecture, responsive composition and lighting.
-- `use-tehran-light.ts` shares one clock with the courtyard; daytime begins at
-  06:00, sunset grading at 17:00, and night at 20:00 in `Asia/Tehran`.
-- `scene-transitions.ts` reuses the existing cancellable entry runner for a
-  1.53-second wooden-door transition. System or local reduced-motion settings
-  remove the camera movement and shorten entry to 320ms.
+Desktop uses a panoramic room wide enough to preserve the architecture's aspect
+ratio. Scroll, trackpad, drag on empty space, arrow keys, Home/End and doorway
+links explore it. A second photographic backdrop reveals a reading alcove.
+Mobile places photos along a touch-friendly wall with generous spacing rather
+than shrinking the desktop composition. The next wall is discoverable by swiping.
 
-Desktop supports wheel/trackpad, dragging empty wall space, arrow keys, Home/End
-and explicit previous/next wall controls. Mobile uses native horizontal swiping
-and a separate stacked frame composition. ESC retracts an approached frame;
-keyboard focus returns to its original button. Tab stays with the approached
-memory and trail; surrounding site controls become inert until it closes.
+The same physical frame DOM node approaches the viewer and returns to its wall
+anchor. The room dims behind it; no duplicate photo/lightbox is mounted. Escape
+retracts it and restores keyboard focus. Connections first retract, then travel,
+then approach. New intentions cancel previous journeys. Resize observers, frame
+loops and listeners are cleaned up. Reduced motion skips travel and transitions.
 
-Connected-memory actions retract the current frame, travel along the corridor,
-then approach the related frame. The trail retains the last 12 unique visits.
-It resets when leaving the Gallery. Refreshing `/#gallery` opens the room directly;
-room changes push history entries so browser Back/Forward restores destinations.
-Animation waits, animation frames, resize observers and event listeners are
-cancelled/removed when leaving the room.
+Only the current and adjacent rooms receive photo sources; native lazy loading
+and asynchronous decoding handle distance within them. No new runtime dependency
+was added. The collection is limited to 120 photos; larger archives should add
+virtualization. Two photographic room plates repeat for longer collections; this
+is a lightweight 2.5D environment, not unrestricted 3D movement.
+
+The existing `/#gallery` routing/history and 1.53-second doorway transition are
+retained. Tehran daytime starts at 06:00, sunset at 17:00 and night at 20:00,
+using the courtyard's existing shared clock.
+
+## Architecture asset provenance
+
+`room.webp` / `room-mobile.webp`: supplied reference edited with built-in ImageGen
+to remove UI and framed photos, preserving plaster, carved doorway, lamps, rug,
+bench, plants and pool. `alcove.webp` / `alcove-mobile.webp`: matching adjacent
+house room with a reading nook. `walnut-frame.webp`: generated orthographic walnut
+frame with transparent aperture, sliced at 164px for scalable borders.
+These are environmental assets; the collection's photographs are existing local
+repository images. Photo replacement never requires regenerating the room.
 
 ## Verification
 
-`npm test` builds production assets and runs the project tests. Gallery tests cover
-content defaults/assets/connections, lighting boundaries, portrait/square/landscape
-projection at desktop and mobile sizes, frame DOM identity and retraction,
-keyboard focus and ESC, category stability, connected navigation, trail returns,
-resize/image failure, reduced motion, cancellation/unmount cleanup, direct room
-navigation and browser history using the actual Garden component in jsdom.
+`npm run typecheck`, scoped Gallery ESLint, production build, Gallery data and DOM
+integration tests, and real-browser desktop/mobile checks. See `design-qa.md`
+for visual evidence and browser checks. DOM tests supply explicit geometry and
+verify identity, focus, categories, relationships, mobile resizing, failures,
+rapid cancellation, reduced motion, history and unmount cleanup.
 
-DOM geometry is explicitly supplied in integration tests: they verify interaction
-logic, not browser layout or appearance. A real-browser visual pass is still
-required before visual sign-off; the available browser could not reach the local
-preview in this work environment. Check desktop, tablet and 360px mobile widths,
-scroll containment, frame alignment during approach/retraction and the three
-lighting states. Repository-wide lint has existing errors in Garden and the
-unused spatial renderer; the new Gallery modules are linted separately.
+The production HTML smoke test runs the built worker in Miniflare/workerd with
+isolated bindings. Its previous direct Node import could not resolve
+`cloudflare:workers`; the test now uses the same runtime model as deployment.
+Miniflare was already installed transitively by Wrangler and is now pinned as an
+explicit development dependency for this test. No client/runtime dependency changed.
